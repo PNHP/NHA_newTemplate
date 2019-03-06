@@ -82,3 +82,5 @@ NHA_newTemplate.gdb/a00000004.freelist
 *.tbx
 *.gen
 Index/NHA_newTemplate/segments_4
+*.xml
+NHA_newTemplate.gdb/gdb
