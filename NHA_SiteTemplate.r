@@ -1,0 +1,42 @@
+
+
+#tool_exec <- function(in_params, out_params)  #
+#{
+
+
+# check and load required libraries  
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+require(here)
+if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
+require(arcgisbinding)
+if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
+require(RSQLite)
+if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
+require(knitr)
+library(xtable)
+
+arc.check_product()
+  
+# open the NHA feature class and select and NHA
+nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+selected_nha <- arc.select(nha, where_clause ="SITE_NAME='Town Hill Barren'")
+nha_siteName <- selected_nha$SITE_NAME
+nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
+
+
+# open the related species table and get the rows that match the NHA join id from above
+nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
+selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("NHA_JOIN_ID=",selected_nha$NHA_JOIN_ID,sep=""
+selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),]
+
+SD_speciesTable <- selected_nha_relatedSpecies[c("SNAME","SCOMNAME","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R")]
+
+
+
+# knit2pdf errors for some reason...just knit then call directly
+knit(paste("NHA_SiteTemplate.rnw",sep="/"), output=paste(nha_filename, ".tex",sep=""))
+call <- paste0("pdflatex -interaction=nonstopmode ",nha_filename , ".tex")
+# call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
+system(call)
+system(call) # 2nd run to apply citation numbers
+

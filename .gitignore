@@ -21,6 +21,9 @@
 vignettes/*.html
 vignettes/*.pdf
 
+# geodatabase
+NHA_newTemplates.gdb/*
+
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
 
@@ -58,3 +61,24 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.txt
+*.aprx
+NHA.db
+*.aux
+TownHillBarren.log
+*.pdf
+TownHillBarren.tex
+*.gdbtable
+*.gdbtablx
+NHA_newTemplate.gdb/a00000004.CatItemsByPhysicalName.atx
+*.gdbindexes
+*.atx
+NHA_newTemplate.gdb/NHA_Core.PGH-RCH-90789.10888.9964.sr.lock
+*.lock
+NHA_newTemplate.gdb/timestamps
+*.spx
+NHA_newTemplate.gdb/a00000004.freelist
+*.cfs
+*.tbx
+*.gen
+Index/NHA_newTemplate/segments_4
