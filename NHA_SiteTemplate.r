@@ -29,7 +29,7 @@ nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("NHA_JOIN_ID=",selected_nha$NHA_JOIN_ID,sep=""
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),]
 
-SD_speciesTable <- selected_nha_relatedSpecies[c("SNAME","SCOMNAME","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R")]
+SD_speciesTable <- selected_nha_relatedSpecies[c("SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R")]
 
 
 
@@ -40,3 +40,15 @@ call <- paste0("pdflatex -interaction=nonstopmode ",nha_filename , ".tex")
 system(call)
 system(call) # 2nd run to apply citation numbers
 
+# delete .txt, .log etc if pdf is created successfully.
+fn_ext <- c(".log",".aux",".out",".tex") 
+if (file.exists(paste(nha_filename, ".pdf",sep=""))){
+  #setInternet2(TRUE)
+  #download.file(fileURL ,destfile,method="auto")
+  for(i in 1:NROW(fn_ext)){
+    fn <- paste(nha_filename, fn_ext[i],sep="")
+    if (file.exists(fn)){ 
+      file.remove(fn)
+    }
+  }
+}
