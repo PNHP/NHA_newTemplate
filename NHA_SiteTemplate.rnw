@@ -10,14 +10,18 @@
 
 \begin{document}
 
-\noindent\textbf{\Sexpr{as.character(nha_siteName)}}\\
+% Header
+\noindent
+\large{\Sexpr{as.character(nha_siteName)}}\\
 
 \medskip
+
+% Site Description
 \noindent
 [Site Description – this should be about a one paragraph description of the site describing its location, size, major habitats, or other descriptive information about the site.  General species info can be placed here (e.g. “The wetlands at this site provide high quality habitat for a number of species of dragonflies.”), but try to avoid specific talk about individual species.]
 \medskip
 
-
+% Species Table
 \begin{table}[h]
 \small
 \centering
@@ -36,15 +40,34 @@ for(i in 1:nrow(SD_speciesTable)){
 
 
 
+% Conservation Recomendations
+
+
 \bigskip
-\noindent
-\textbf{\underline{Location}}\\
+% Location and Additional Infomation
+\noindent\textbf{\underline{Location}}\\
 \smallskip
 \textbf{Municipalities:} \Sexpr{selected_nha$Muni} \\
 \textbf{USGS quads:} \Sexpr{selected_nha$USGS_QUAD} \\
 \textbf{Previous CNHI reference:} \Sexpr{selected_nha$OLD_SITE_NAME} \\
 \textbf{Associated NHAs:} \Sexpr{selected_nha$ASSOC_NHA} \\ 
 \textbf{Overlapping Protected Lands:} \Sexpr{selected_nha$PROTECTED_LANDS} \\
+
+% Recommended Citation
+\setlength{\fboxsep}{5pt}
+\fbox{
+\begin{minipage}[t]{0.90\linewidth}%
+Please cite this Natural Heritage Area as: \\
+Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_siteName)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
+\end{minipage}
+}
+
+% References
+\noindent\textbf{\underline{References}}\\
+
+
+
+
 
 
 \end{document}
