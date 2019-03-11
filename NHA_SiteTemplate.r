@@ -13,7 +13,9 @@ if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
 require(RSQLite)
 if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
 require(knitr)
-library(xtable)
+if (!requireNamespace("xtable", quietly = TRUE)) install.packages("xtable")
+require(xtable)
+
 
 arc.check_product()
   

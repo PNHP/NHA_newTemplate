@@ -14,7 +14,7 @@
 
 \medskip
 \noindent
-[Site Description – this should be about a one paragraph description of the site describing its location, size, major habitats, or other descriptive information about the site.  General species info can be placed here (e.g. “The wetlands at this site provide high quality habitat for a number of species of dragonflies.”), but try to avoid specific talk about individual species.]
+{\color{Gray}[Site Description - this should be about a one paragraph description of the site describing its location, size, major habitats, or other descriptive information about the site.  General species info can be placed here (e.g. \textit{"The wetlands at this site provide high quality habitat for a number of species of dragonflies."}\), but try to avoid specific talk about individual species.]}\color
 \medskip
 
 
@@ -35,8 +35,31 @@ for(i in 1:nrow(SD_speciesTable)){
 \end{table}
 
 
+\medskip
+\noindent
+{\color{gray}{[After the table, it's cool (but not necessary) to add additional detail about each species or group of species at this NHA.  If information is added, try to keep it general and not have a lot of detail about each specific taxon as it will help to keep the sites as current as possible without a lot of ongoing editing-remember, we are going to rely on the factsheets for that purpose.  For example, it would be good to say something like \textit {"The dragonflies at this site depend on clean water to breed"}\ as that statement would likely be true even if we added or subtracted species to the list]}  
 
-\bigskip
+\medskip
+\noindent
+[this is where the Biotics info will eventually go]
+\medskip
+
+\noindent
+\textbf{\underline{Threats and Species Recommendations }}\\
+\smallskip
+\noindent
+{\color{gray}[This area should include a short description of the overall threats and conservation recommendations to the NHA. An overview of historic impacts can be placed here as well. Additionally, this section could include a general statement or paragraph about recommendations. Some example statements include \textit {"The majority of the site is contained within the XXX State Forest and is more or less protected from development"}\ Could also reference existing management plans. The goal of the list items here should be a list of action steps as to what needs to be done for the conservation of the site and present elements of biodiversity. If there should be some order here, maybe simplest first and the more complex tasks later.]}\color\\
+\medskip
+
+\noindent
+Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
+\smallskip
+\begin{itemize}
+    \item \color{gray}[First bullet point]\color\\ 
+    \item \color{gray}[Another bullet point]\color\\
+    \item \color{gray}[Add as many bullet points as you want]\color\\
+\end{itemize}
+
 \noindent
 \textbf{\underline{Location}}\\
 \smallskip
