@@ -84,3 +84,9 @@ NHA_newTemplate.gdb/a00000004.freelist
 Index/NHA_newTemplate/segments_4
 *.xml
 NHA_newTemplate.gdb/gdb
+*.jpg
+Index/NHA_newTemplate/_2_1.del
+Index/Thumbnail/indx
+.Rproj.user
+Index/NHA_newTemplate/segments_5
+*.sqlite
