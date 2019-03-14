@@ -1,0 +1,196 @@
+---
+output: word_document
+---
+
+```{r setup, include=FALSE}
+# check and load required libraries  
+if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
+require(here)
+if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
+require(arcgisbinding)
+if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
+require(RSQLite)
+if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
+require(knitr)
+if (!requireNamespace("xtable", quietly = TRUE)) install.packages("xtable")
+require(xtable)
+if (!requireNamespace("flextable", quietly = TRUE)) install.packages("flextable")
+require(flextable)
+if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
+require(DBI)
+
+arc.check_product()
+
+## Network Paths and such
+biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
+
+# open the NHA feature class and select and NHA
+nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
+nha_siteName <- selected_nha$SITE_NAME
+nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
+```
+
+---
+title: `r paste(as.character(nha_siteName), "NHA")`  
+---
+
+Site significance rank: `r with(selected_nha, ifelse(SIG_RANK == "S", "State", ifelse(SIG_RANK == "R", "Regional", ifelse(SIG_RANK=="G", "Global", ifelse(SIG_RANK=="L", "Local", "NA")))))`
+
+# Brief Description
+
+>Site Description - this should be about a one paragraph description of the site describing its location, size, major habitats, or other descriptive information about the site.  General species info can be placed here (e.g. *"The wetlands at this site provide high quality habitat for a number of species of dragonflies."*), but try to avoid specific talk about individual species.  
+
+This site is described as *`r selected_nha[7]$BRIEF_DESC`*  
+
+Enter your site description text in the space between these lines:
+
+
+***  
+
+*enter text here*
+
+***  
+
+Species or natural communities of concern that can be found in this NHA include the following:
+
+```{r species table, echo=FALSE}
+## Build the Species Table #########################
+# open the related species table and get the rows that match the NHA join id from above
+nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
+selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
+selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
+
+SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R")] # subset to columns that are needed.
+
+SD_speciesTablePrint <- SD_speciesTable[,-c(1:2)]
+row.names(SD_speciesTablePrint) <- SD_speciesTable$SNAME
+
+#Print species table for site
+STable <- flextable(head(SD_speciesTablePrint))
+STable <- fontsize(STable, part="all", size=7)
+STable <- italic(STable, j= ~ SNAME, italic=TRUE)
+STable <- rotate(STable, rotation = "tbrl", part = "header", align = "center")
+STable <- align(STable, align = "center", part = "body")
+STable <- height(STable, height = 1, part = "header")
+STable
+```
+
+```{r select Biotics EO Records, echo=FALSE}
+eoid_list <- paste(toString(SD_speciesTable$EO_ID), collapse = ",")  # make a list of EOIDs to get data from
+ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse = ",")  # make a list of EOIDs to get data from
+
+ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
+ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
+## Information from Biotics
+```
+
+## Information from Biotics
+
+>See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the brief description and the threats and conservation recommendations section
+
+```{r print Biotics info, echo=FALSE}
+
+SD_eodata <- ptreps_selected
+SD_eodatap <- c(SD_eodata, sep=" ")
+do.call(paste, SD_eodatap)
+
+```
+
+# Threats and Conservation Recommendations
+
+>This area should include a short description of the overall threats and conservation recommendations to the NHA.  An overview of historic impacts can be placed here as well. Additionally, this section could include a general statement or paragraph about recommendations.  Some example statements include *"The majority of the site is contained with the XXX State Forest and is more or less protected from development"* or something similar. Could also reference existing management plans.
+
+Enter your threats and conservation recommendations summary text in the space between these lines:
+
+
+***  
+
+*enter text here*
+
+***  
+
+Specific threats and conservation recommendations for the elements present at this site include:
+
+>The goal of the list items here should be a list of action steps as to what needs to be done for the conservation of the site.  If there should be some sort of order here, maybe simplest first and the more complex tasks later.
+
+Enter your specific threats and conservation recommendations bullets in the space between these lines:
+
+
+*** 
+
+* *First specific threats + conservation rec bullet*
+* *Second bullet*
+* *Add however many bullets you need*
+
+***  
+
+
+## EO-Specific Threats and Conservation Recommendation Info
+
+``` {r EO Threats Database, echo=FALSE}
+#con <- dbConnect(RSQLite::SQLite(), ":memory:")
+#dbListTables(con)
+#dbWriteTable(con, "TRdb", "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/EO_ThreatsRecs.db")
+#dbListTables(con)
+#dbListFields(con, "TRdb") 
+#none of this is currently running
+#Error in scan(file = file, what = what, sep = sep, quote = quote, dec = dec,  : 
+ # line 7 did not have 2 elements
+#In addition: Warning messages:
+#1: In utils::read.table(value, sep = sep, header = header, skip = skip,  :
+#  line 1 appears to contain embedded nulls
+#2: In utils::read.table(value, sep = sep, header = header, skip = skip,  :
+#  line 2 appears to contain embedded nulls
+
+TRdf <- read.csv("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_threatsrecs_test.csv")
+TRdf$ELCODE <- as.character(TRdf$ELCODE)
+TRdf_select <- TRdf[TRdf$ELCODE %in% SD_speciesTable$ELCODE,]
+do.call(paste, TRdf_select[,c(3,8,9,12)])
+```
+# Location
+
+**Municipalities:** `r selected_nha$Muni`  
+**USGS quads:** `r selected_nha$USGS_QUAD`  
+**Previous CNHI reference:** `r selected_nha$OLD_SITE_NAME`  
+**Associated NHAs:** `r selected_nha$ASSOC_NHA`   
+**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`  
+
+Please cite this Natural Heritage Area as:  
+Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
+
+>Are there any issues that you noticed that should be corrected, for this site or the EOs? Please describe in the space between the lines, below:
+
+***
+
+*enter text here*
+
+***
+
+>Do you have pictures of either the site, or the species present at the site? If so, upload them, with accompanying information, below, between the lines. Add up to 3 images per site:
+
+***
+Photo one  
+* Photographer Name: *enter name here*  
+* Photo caption: *enter short description of photo here*  
+* Attach photo here: *attach photo image file, preferably as a ____________ here*  
+
+***
+
+***
+Photo two  
+* Photographer Name: *enter name here*  
+* Photo caption: *enter short description of photo here*  
+* Attach photo here: *attach photo image file, preferably as a ____________ here*  
+
+***
+
+***
+Photo three  
+* Photographer Name: *enter name here*  
+* Photo caption: *enter short description of photo here*  
+* Attach photo here: *attach photo image file, preferably as a ____________ here*  
+
+***
+
+
