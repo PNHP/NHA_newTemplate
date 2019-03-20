@@ -57,7 +57,7 @@ ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN
 SD_eodata <- ptreps_selected
 #SD_eodata <- merge(ptreps_selected,SD_speciesTable[c("ELCODE","SNAME")],all.x=TRUE)
 
-
+## change this to RMD instead of RNW
 ## Write the output document for the site ###############
 setwd(here("output"))
 # knit2pdf errors for some reason...just knit then call directly
