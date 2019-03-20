@@ -37,11 +37,15 @@ nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 title: `r paste(as.character(nha_siteName), "NHA")`
 ---
 
+Site significance rank: `r paste(as.character(selected_nha$SIG_RANK))`  
+NHA Join ID: `r paste(as.character(selected_nha$NHA_JOIN_ID))`  
+<br><br><br><br>
+
 # Site Description
 
 Site Description - this should be about a one paragraph description of the site describing its location, size, major habitats, or other descriptive information about the site.  General species info can be placed here (e.g. *"The wetlands at this site provide high quality habitat for a number of species of dragonflies."*), but try to avoid specific talk about individual species.  
 
-This site is briefly described as: **`r selected_nha[7]$BRIEF_DESC`**  
+This brief description from the NHA geodatabase reads: **`r selected_nha[7]$BRIEF_DESC`**  
 
 <br><br><br><br>
 
@@ -85,6 +89,17 @@ ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse 
 
 ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
 ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
+
+#generate URLs for each EO at site
+
+URL_EOs <- sapply(seq_along(ptreps_selected$EO_ID), function(x)  paste("https://bioticspa.natureserve.org/biotics/services/page/Eo/",ptreps_selected$EO_ID[x],".html", sep=""))
+
+URL_EOs <- sapply(seq_along(URL_EOs), function(x) paste("(",URL_EOs[x],")", sep=""))
+Sname_link <- sapply(seq_along(ptreps_selected$SNAME), function(x) paste("[",ptreps_selected$SNAME[x],"]", sep=""))
+Links <- paste(Sname_link, URL_EOs, sep="") 
+
+ #for now, add to the biotics table output
+
 ## Information from Biotics
 ```
 
@@ -92,14 +107,17 @@ ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN
 
 ## Information from Biotics
 
-See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the site description and the threats and conservation recommendations section.
+See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the site description and the threats and conservation recommendations section.  
+To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site:  
+
+`r Links`  
 
 <br><br><br><br>
 
 ```{r print Biotics info, echo=FALSE}
 
 SD_eodata <- ptreps_selected
-SD_eodatap <- c(SD_eodata, sep=" ")
+SD_eodatap <- c(SD_eodata, sep="--")
 do.call(paste, SD_eodatap)
 
 ```
