@@ -64,10 +64,10 @@ This brief description from the NHA geodatabase reads: **`r selected_nha[7]$BRIE
 
 **Enter your site description text in the space between these lines:**
 
-***
+***  
 |DESC_B|  
   
-*enter text here, between these brackets. Please do not delete the brackets!! *
+*enter text here, between these tags. Please do not delete the tags!! *
 
 |DESC_E|  
 
@@ -147,11 +147,12 @@ This area should include, first, a short, one paragraph description of the overa
 **Enter your threats and conservation recommendations summary paragraph in the space between these lines:**
 
 ***  
-<<THRRECP_B>>  
+|THRRECP_B|  
 
-*enter text here, between these brackets. Please do not delete the brackets!!*
+*enter text here, between these tags. Please do not delete the tags!!*
   
-<<THRRECP_E>>   
+|THRRECP_E|   
+
 ***  
 
 <br><br><br><br>
@@ -165,11 +166,12 @@ Secondly, this section will contain a bulleted list of known conservation issues
 **Enter your specific threats and conservation recommendations bullets in the space between these lines:**
 
 ***  
-<<THRRECB_B>>  
+|THRRECB_B|  
 
-*enter text here, between these brackets. Please do not delete the brackets!!*
+*enter text here, between these tags. Please do not delete the tags!!*
   
-<<THRRECB_E>>  
+|THRRECB_E|  
+
 ***  
 
 <br><br><br><br>
@@ -226,11 +228,12 @@ do.call(paste, Sel_TR)
 Below, see the list of references associated with the automated threats and recommendations bullets. Please copy and paste below the references that are associated with bullets which you actually used to write this site report.  
 
 ***  
-<<REF_B>>  
+|REF_B|  
 
-*enter text here, between these brackets. Please do not delete the brackets!!*
+*enter text here, between these tags. Please do not delete the tags!!*
   
-<<REF_E>>  
+|REF_E|   
+
 ***  
 
 ```{r References, echo=FALSE}
@@ -257,14 +260,15 @@ Do you have pictures of either the site, or the species present at the site? If 
 
 ***
 **Photo one**  
-<<PHOTO1_B>>  
+|PHOTO1_B| 
 
 
 * Photographer Name: *enter name here.*  
 * Photo caption: *enter short description of photo here*
 * Photo file name: *enter name of photo file uploaded to folder here.* 
   
-<<PHOTO1_E>>  
+|PHOTO1_E|   
+
 ***
 
 <br><br><br><br>
@@ -273,25 +277,27 @@ Do you have pictures of either the site, or the species present at the site? If 
 ***
 **Photo two**
 
-<<PHOTO2_B>>
+|PHOTO2_B|
 
 * Photographer Name: *enter name here.*  
 * Photo caption: *enter short description of photo here*
 * Photo file name: *enter name of photo file uploaded to folder here.*  
   
-<<PHOTO2_E>>   
+|PHOTO2_E|   
+
 ***
 
 <br><br><br><br>
 
 
 ***
-<<PHOTO1_B>>  
+|PHOTO1_B|  
 **Photo three**  
 * Photographer Name: *enter name here.*  
 * Photo caption: *enter short description of photo here*
 * Photo file name: *enter name of photo file uploaded to folder here.* 
   
-<<PHOTO1_E>>      
+|PHOTO1_E|  
+
 ***
 
