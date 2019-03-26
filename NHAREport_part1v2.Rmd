@@ -3,7 +3,7 @@ output: word_document
 ---
 
 # `r paste(as.character(nha_siteName), "NHA")`  
-Site significance rank: `r paste(as.character(selected_nha$SIG_RANK))`  
+Site significance rank: |SigB| `r paste(as.character(selected_nha$SIG_RANK))` 
 NHA Join ID: `r paste(as.character(selected_nha$NHA_JOIN_ID))`  
 
 
@@ -187,9 +187,9 @@ Do you have pictures of either the site, or the species present at the site? If 
 |PHOTO1_B| 
 
 
-* Photographer Name: *enter name here.*  
-* Photo caption: *enter short description of photo here*
-* Photo file name: *enter name of photo file uploaded to folder here.* 
+1. Photographer Name: *enter name here.*  
+2. Photo caption: *enter short description of photo here*
+3. Photo file name: *enter name of photo file uploaded to folder here.* 
   
 |PHOTO1_E|   
 
@@ -203,9 +203,9 @@ Do you have pictures of either the site, or the species present at the site? If 
 
 |PHOTO2_B|
 
-* Photographer Name: *enter name here.*  
-* Photo caption: *enter short description of photo here*
-* Photo file name: *enter name of photo file uploaded to folder here.*  
+1. Photographer Name: *enter name here.*  
+2. Photo caption: *enter short description of photo here*
+3. Photo file name: *enter name of photo file uploaded to folder here.*  
   
 |PHOTO2_E|   
 
@@ -215,13 +215,13 @@ Do you have pictures of either the site, or the species present at the site? If 
 
 
 ***
-|PHOTO1_B|  
+|PHOTO3_B|  
 **Photo three**  
-* Photographer Name: *enter name here.*  
-* Photo caption: *enter short description of photo here*
-* Photo file name: *enter name of photo file uploaded to folder here.* 
+1. Photographer Name: *enter name here.*    
+2. Photo caption: *enter short description of photo here*    
+3. Photo file name: *enter name of photo file uploaded to folder here.*   
   
-|PHOTO1_E|  
+|PHOTO3_E|  
 
 ***
 
