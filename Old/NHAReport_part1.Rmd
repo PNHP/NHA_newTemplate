@@ -2,7 +2,7 @@
 output: word_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, cache.lazy=T}
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 require(here)
@@ -77,7 +77,7 @@ This brief description from the NHA geodatabase reads: **`r selected_nha[7]$BRIE
 
 Please check the species table below for accuracy. Make a note of any issues, using Word comments.
 
-```{r species table, echo=FALSE}
+```{r species table, echo=FALSE, cache.lazy=T}
 ## Build the Species Table #########################
 # open the related species table and get the rows that match the NHA join id from above
 nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
@@ -99,7 +99,7 @@ STable <- height(STable, height = 1, part = "header")
 STable
 ```
 
-```{r select Biotics EO Records, echo=FALSE}
+```{r select Biotics EO Records, echo=FALSE, cache.lazy=T}
 eoid_list <- paste(toString(SD_speciesTable$EO_ID), collapse = ",")  # make a list of EOIDs to get data from
 ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse = ",")  # make a list of EOIDs to get data from
 
@@ -130,7 +130,7 @@ To learn more about each EO, follow the links provided below to the Biotics page
 
 <br><br><br><br>
 
-```{r print Biotics info, echo=FALSE}
+```{r print Biotics info, echo=FALSE, cache.lazy=T}
 
 SD_eodata <- ptreps_selected
 SD_eodatap <- c(SD_eodata, sep="--")
@@ -186,7 +186,7 @@ Included below is species-specific information on general conservation threats a
 2. The text for each species-specific threat and recommendation available in the database. Copy and paste those which are relevant at this site into conservation threats and recommendations bullets.
 
 
-``` {r EO Threats Database, echo=FALSE}
+``` {r EO Threats Database, echo=FALSE, cache.lazy=T}
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
 
@@ -236,7 +236,7 @@ Below, see the list of references associated with the automated threats and reco
 
 ***  
 
-```{r References, echo=FALSE}
+```{r References, echo=FALSE, cache.lazy=T}
 
 Sel_Citations <- inner_join(ELCODE_sub, TRtable, copy=TRUE) %>%
   select(Citation_Full) %>% collect()
