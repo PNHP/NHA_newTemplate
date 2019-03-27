@@ -57,7 +57,7 @@ rm(n)
 
 # insert in the sqlite database
 databasename <- "NHA_Database.sqlite" 
-databasename <- here(databasename)
+databasename <- here("databases",databasename)
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
   dbWriteTable(db, "ElementTracking", ElementTracking, overwrite=TRUE) # write the output to the sqlite db
 dbDisconnect(db) # disconnect the db

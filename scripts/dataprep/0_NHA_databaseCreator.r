@@ -18,7 +18,7 @@ require(RSQLite)
 
 # Set input paths ----
 databasename <- "NHA_Database.sqlite" 
-databasename <- here(databasename)
+databasename <- here("databases",databasename)
 
 # connect to the database
 db <- dbConnect(SQLite(), dbname=databasename) # creates an empty COA database
