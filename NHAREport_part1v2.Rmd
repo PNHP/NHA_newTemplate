@@ -173,7 +173,8 @@ Please indicate whether the information below is correct. Use Word comments to f
 **USGS quads:** `r selected_nha$USGS_QUAD`  
 **Previous CNHI reference:** `r selected_nha$OLD_SITE_NAME`  
 **Associated NHAs:** `r selected_nha$ASSOC_NHA`   
-**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`  
+**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`
+**Acreage:** `r round(selected_nha$Acres, -1)` acres
 
 Please cite this Natural Heritage Area as:  
 Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
@@ -184,30 +185,25 @@ Do you have pictures of either the site, or the species present at the site? If 
 
 ***
 **Photo one**  
-|PHOTO1_B| 
 
-
-1. Photographer Name: *enter name here.*  
-2. Photo caption: *enter short description of photo here*
-3. Photo file name: *enter name of photo file uploaded to folder here.* 
+1. Photographer Name: |P1N_B| *enter name here.*  |P1N_E|
+2. Photo caption: |P1C_B| *enter short description of photo here* |P1C_E|
+3. Photo file name: |P1F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P1F_E|
   
-|PHOTO1_E|   
-
 ***
 
 <br><br><br><br>
 
 
 ***
+ 
 **Photo two**
 
-|PHOTO2_B|
 
-1. Photographer Name: *enter name here.*  
-2. Photo caption: *enter short description of photo here*
-3. Photo file name: *enter name of photo file uploaded to folder here.*  
+1. Photographer Name: |P2N_B| *enter name here.*  |P2N_E|
+2. Photo caption: |P2C_B| *enter short description of photo here* |P2C_E|
+3. Photo file name: |P2F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P2F_E|
   
-|PHOTO2_E|   
 
 ***
 
@@ -215,13 +211,13 @@ Do you have pictures of either the site, or the species present at the site? If 
 
 
 ***
-|PHOTO3_B|  
+ 
 **Photo three**  
-1. Photographer Name: *enter name here.*    
-2. Photo caption: *enter short description of photo here*    
-3. Photo file name: *enter name of photo file uploaded to folder here.*   
+
+1. Photographer Name: |P3N_B| *enter name here.*  |P3N_E|
+2. Photo caption: |P3C_B| *enter short description of photo here* |P3C_E|
+3. Photo file name: |P3F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P3F_E|   
   
-|PHOTO3_E|  
 
 ***
 

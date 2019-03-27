@@ -57,4 +57,4 @@ src_dbi(TRdb) #check structure of database
 
 #Add the new NHA data into the data table as a line
 dbWriteTable(TRdb, "NHAReport", value = AddNHA, append = TRUE) 
-tbl(TRdb, "NHAReport")) #check do see it got added
+tbl(TRdb, "NHAReport") #check do see it got added
