@@ -2,13 +2,20 @@
 output: word_document
 ---
 
-# `r paste(as.character(nha_siteName), "NHA")`  
-Site significance rank: |SigB| `r paste(as.character(selected_nha$SIG_RANK))` 
-NHA Join ID: `r paste(as.character(selected_nha$NHA_JOIN_ID))`  
+# `r paste(as.character(nha_siteName), "NHA")` 
+Site significance rank: |SIG_B| **`r paste(as.character(selected_nha$SIG_RANK))`**  |SIG_E|   
+
+NHA Join ID: |JOIN_B| **`r paste(as.character(selected_nha$NHA_JOIN_ID))`** |JOIN_E|   
 
 
 <br><br><br><br>
 
+# Instructions  
+
+This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder, FOLDER PATH HERE.  
+
+<br><br><br><br>
+  
 # Overview of NHA Report Status for this Site  
 Please highlight or otherwise indicate the answers to the following questions upon completion of this site report; add details if necessary to your responses, using Word comments:  
 
