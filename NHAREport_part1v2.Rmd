@@ -180,8 +180,8 @@ Please indicate whether the information below is correct. Use Word comments to f
 **USGS quads:** `r selected_nha$USGS_QUAD`  
 **Previous CNHI reference:** `r selected_nha$OLD_SITE_NAME`  
 **Associated NHAs:** `r selected_nha$ASSOC_NHA`   
-**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`
-**Acreage:** `r round(selected_nha$Acres, -1)` acres
+**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`  
+**Acreage:** `r signif(selected_nha$Acres, digits=0)` acres
 
 Please cite this Natural Heritage Area as:  
 Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
