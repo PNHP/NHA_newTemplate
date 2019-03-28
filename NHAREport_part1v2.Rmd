@@ -3,9 +3,9 @@ output: word_document
 ---
 
 # `r paste(as.character(nha_siteName), "NHA")` 
-Site significance rank: |SIG_B| **`r paste(as.character(selected_nha$SIG_RANK))`**  |SIG_E|   
+Site significance rank: **`r paste(as.character(selected_nha$SIG_RANK))`**      
 
-NHA Join ID: |JOIN_B| **`r paste(as.character(selected_nha$NHA_JOIN_ID))`** |JOIN_E|   
+NHA Join ID: **`r paste(as.character(selected_nha$NHA_JOIN_ID))`**    
 
 
 <br><br><br><br>
@@ -112,12 +112,17 @@ Secondly, this section will contain a bulleted list of known conservation issues
 
 <br><br><br><br>
 
-**Enter your specific threats and conservation recommendations bullets in the space between these lines:**
+**Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format *|Bull1_B| bullet text here |Bull1_E|, |Bull2_B| bullet text here |Bull2_E|*, etc. until you have completed all the bullets you need:**
 
 ***  
-|THRRECB_B|  
+|Bull1_B| *bullet text 1, between these tags, Please do not delete these tags!!* |Bull1_E| 
 
-*enter text here, between these tags. Please do not delete the tags!!*
+|Bull2_B| *bullet text 2, between these tags, Please do not delete these tags!!* |Bull2_E|   
+
+|Bull3_B| *bullet text 3, between these tags, Please do not delete these tags!!* |Bull3_E|  
+
+*add as many additional, sequentially numbered and tagged bullets as needed*  
+
   
 |THRRECB_E|  
 
