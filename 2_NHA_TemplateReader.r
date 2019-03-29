@@ -8,6 +8,8 @@ if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr"
   require(textreadr)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
   require(dplyr)
+if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
+  require(dbplyr)
 
 # load in the paths and settings file
 source(here("0_PathsAndSettings.r"))
