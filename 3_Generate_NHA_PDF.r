@@ -29,7 +29,7 @@ if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
   require(DBI)
 
 # load in the paths and settings file
-source(here("SGCN_DataCollection","0_PathsAndSettings.r"))
+source(here("0_PathsAndSettings.r"))
 
 # Connect to database containing NHA report content
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB

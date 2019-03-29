@@ -31,7 +31,7 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
 # load in the paths and settings file
-source(here("SGCN_DataCollection","0_PathsAndSettings.r"))
+source(here("0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
