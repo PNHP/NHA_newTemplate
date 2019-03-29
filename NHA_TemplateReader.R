@@ -82,9 +82,10 @@ TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heri
 
 src_dbi(TRdb) #check structure of database
 
-dbCreateTable(TRdb, "NHAReport2", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
-dbCreateTable(TRdb, "Photos", AddPhotos) #This should only be run the first time, to create the database table to hold the data
+ #This should only be run the first time, to create the database table to hold the data
+
+dbCreateTable(TRdb, "NHAReport2", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
 #Add the new NHA data into the data table as a line
 dbWriteTable(TRdb, "NHAReport2", value = AddNHA, append = TRUE) 
