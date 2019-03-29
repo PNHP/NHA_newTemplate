@@ -88,7 +88,7 @@ ELCODE_sub <- ELCODE_TR %>%
 
 ######### Write the output document for the site ###############
 
-rmarkdown::render(input=here("NHAREport_part1v2.Rmd"), output_format="word_document", 
+rmarkdown::render(input=here("template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename, ".docx",sep=""),
                   output_dir = here("output"))
 

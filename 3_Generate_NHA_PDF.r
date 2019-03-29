@@ -50,7 +50,7 @@ LData <- my_data %>%
 ## Write the output document for the site ###############
 setwd(here("output"))
 # knit2pdf errors for some reason...just knit then call directly
-knit(here("Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
+knit(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
 call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
 # call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
 system(call)
