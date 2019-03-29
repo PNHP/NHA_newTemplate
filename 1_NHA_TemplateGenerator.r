@@ -10,7 +10,7 @@
 # To Do List/Future ideas:
 #
 #-------------------------------------------------------------------------------
-setwd("H:/Github_NHA/NHA_newTemplate/")
+setwd(here())
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
@@ -31,7 +31,7 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
 # load in the paths and settings file
-source(here("scripts","SGCN_DataCollection","0_PathsAndSettings.r"))
+source(here("SGCN_DataCollection","0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))

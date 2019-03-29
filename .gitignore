@@ -91,3 +91,5 @@ Index/Thumbnail/indx
 Index/NHA_newTemplate/segments_5
 *.sqlite
 *.pdf
+*.docx
+output/TownHillBarren.docx

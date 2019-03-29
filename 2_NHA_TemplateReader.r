@@ -10,7 +10,7 @@ if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
   require(dplyr)
 
 # load in the paths and settings file
-source(here("scripts","SGCN_DataCollection","0_PathsAndSettings.r"))
+source(here("SGCN_DataCollection","0_PathsAndSettings.r"))
 
 setwd(here())
 
