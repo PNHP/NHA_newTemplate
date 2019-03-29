@@ -51,10 +51,12 @@ for(i in 1:nrow(SD_speciesTable)){
 \noindent
 Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
 \smallskip
-
-%add in the individual bullets here!
-
-
+\begin{itemize}
+  \item {\Sexpr{as.character(LData$TRB1)}\\   
+  \item {\Sexpr{as.character(LData$TRB2)}\\   
+  \item {\Sexpr{as.character(LData$TRB3)}\\  
+\end{itemize}
+\bigskip
 % Location and Additional Infomation
 \noindent\textbf{\underline{Location}}\\
 \smallskip
@@ -78,11 +80,5 @@ Please cite this Natural Heritage Area as: \\
 Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_siteName)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
 \end{minipage}
 }
-
-
-
-
-
-
 
 \end{document}
