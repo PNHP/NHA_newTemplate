@@ -14,22 +14,24 @@
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-require(here)
+  require(here)
 if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
-require(arcgisbinding)
+  require(arcgisbinding)
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
-require(RSQLite)
+  require(RSQLite)
 if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
-require(knitr)
+  require(knitr)
 if (!requireNamespace("xtable", quietly = TRUE)) install.packages("xtable")
-require(xtable)
+  require(xtable)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-require(dplyr)
+  require(dplyr)
 if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
-require(DBI)
+  require(DBI)
+
+# load in the paths and settings file
+source(here("scripts","SGCN_DataCollection","0_PathsAndSettings.r"))
 
 # Connect to database containing NHA report content
-
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
 
 src_dbi(TRdb) #check structure of database
@@ -40,7 +42,6 @@ dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull da
 my_data <- dbFetch(MyQuery) #this works!
 
 #ensure you are pulling out the most recent date only for each site (a work-around until I figure out how to selectively overwrite records...)
-
 LData <- my_data %>% 
     group_by(SITE_NAME) %>% 
     top_n(1, DateTime)

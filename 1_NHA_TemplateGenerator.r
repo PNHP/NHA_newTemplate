@@ -30,11 +30,8 @@ require(dplyr)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
-
-arc.check_product()
-
-## Network Paths and such
-biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
+# load in the paths and settings file
+source(here("scripts","SGCN_DataCollection","0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))

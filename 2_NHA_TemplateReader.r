@@ -1,19 +1,22 @@
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-require(here)
+  require(here)
 if (!requireNamespace("readtext", quietly = TRUE)) install.packages("readtext")
-require(readtext)
+  require(readtext)
 if (!requireNamespace("qdapRegex", quietly = TRUE)) install.packages("qdapRegex")
-require(qdapRegex)
+  require(qdapRegex)
 if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr")
-require(textreadr)
+  require(textreadr)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-require(dplyr)
+  require(dplyr)
+
+# load in the paths and settings file
+source(here("scripts","SGCN_DataCollection","0_PathsAndSettings.r"))
 
 setwd(here())
 
 #Pull in the selected NHA data
 setwd(here("Edited_WordTemplates"))
-arc.check_product()
+
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'") #input which NHA site you want
 nha_siteName <- selected_nha$SITE_NAME
@@ -77,13 +80,11 @@ P3F <- rm_between(text1, '|P3F_B|', '|P3F_E|', fixed=TRUE, extract=TRUE)[[1]]
 AddPhotos <- as.data.frame(cbind(SITE_NAME, NHA_JOIN_ID, P1N, P1C, P1F, P2N, P2C, P2F, P3N, P3C, P3F))
 
 #Connect to database and add new data
-
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
 
 src_dbi(TRdb) #check structure of database
 
-
- #This should only be run the first time, to create the database table to hold the data
+#This should only be run the first time, to create the database table to hold the data
 
 dbCreateTable(TRdb, "NHAReport2", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
