@@ -9,7 +9,7 @@ require(textreadr)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
 require(dplyr)
 
-setwd("H:/Github_NHA/NHA_newTemplate/")
+setwd(here())
 
 #Pull in the selected NHA data
 setwd(here("Edited_WordTemplates"))
@@ -94,3 +94,4 @@ tbl(TRdb, "NHAReport2") #check to see it was added
 tbl(TRdb, "Photos") #check to see it was added
 
 dbDisconnect(TRdb) #always disconnect at end of session
+
