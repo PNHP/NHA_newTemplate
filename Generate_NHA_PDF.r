@@ -23,6 +23,10 @@ if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
 require(knitr)
 if (!requireNamespace("xtable", quietly = TRUE)) install.packages("xtable")
 require(xtable)
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+require(dplyr)
+if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
+require(DBI)
 
 # Connect to database containing NHA report content
 
@@ -35,8 +39,13 @@ MyQuery <- dbSendQuery(TRdb, "SELECT * FROM NHAReport2 WHERE SITE_NAME = ?")
 dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
 my_data <- dbFetch(MyQuery) #this works!
 
-#Query database to extract relevant data
+#ensure you are pulling out the most recent date only for each site (a work-around until I figure out how to selectively overwrite records...)
 
+LData <- my_data %>% 
+    group_by(SITE_NAME) %>% 
+    top_n(1, DateTime)
+
+#Query database to extract relevant data
 
 ## Write the output document for the site ###############
 setwd(here("output"))

@@ -73,7 +73,7 @@ STable
 ## Information from Biotics
 
 See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the site description and the threats and conservation recommendations section.  
-To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site:  
+To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site (you may have to copy and paste the links into your browser, once logged into Biotics, to get them to work):  
 
 `r Links`  
 
@@ -123,8 +123,6 @@ Secondly, this section will contain a bulleted list of known conservation issues
 
 *add as many additional, sequentially numbered and tagged bullets as needed*  
 
-  
-|THRRECB_E|  
 
 ***  
 
@@ -193,12 +191,12 @@ Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.chara
 
 <br><br><br><br>
 
-Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site:
+Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site. Please delete any unused photo sections, if you have less than 3 photos:
 
 ***
 **Photo one**  
 
-1. Photographer Name: |P1N_B| *enter name here.*  |P1N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P1N_B| *enter name here.*  |P1N_E|
 2. Photo caption: |P1C_B| *enter short description of photo here* |P1C_E|
 3. Photo file name: |P1F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P1F_E|
   
@@ -212,7 +210,7 @@ Do you have pictures of either the site, or the species present at the site? If 
 **Photo two**
 
 
-1. Photographer Name: |P2N_B| *enter name here.*  |P2N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P2N_B| *enter name here.*  |P2N_E|
 2. Photo caption: |P2C_B| *enter short description of photo here* |P2C_E|
 3. Photo file name: |P2F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P2F_E|
   
@@ -226,7 +224,7 @@ Do you have pictures of either the site, or the species present at the site? If 
  
 **Photo three**  
 
-1. Photographer Name: |P3N_B| *enter name here.*  |P3N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P3N_B| *enter name here.*  |P3N_E|
 2. Photo caption: |P3C_B| *enter short description of photo here* |P3C_E|
 3. Photo file name: |P3F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P3F_E|   
   
