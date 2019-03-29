@@ -27,6 +27,8 @@ if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
   require(dplyr)
 if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
   require(DBI)
+if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
+  require(dbplyr)
 
 # load in the paths and settings file
 source(here("0_PathsAndSettings.r"))

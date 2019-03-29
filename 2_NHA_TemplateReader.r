@@ -83,12 +83,7 @@ AddPhotos <- as.data.frame(cbind(SITE_NAME, NHA_JOIN_ID, P1N, P1C, P1F, P2N, P2C
 
 #Connect to database and add new data
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
-
 src_dbi(TRdb) #check structure of database
-
-#This should only be run the first time, to create the database table to hold the data
-
-dbCreateTable(TRdb, "NHAReport2", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
 #Add the new NHA data into the data table as a line
 dbWriteTable(TRdb, "NHAReport2", value = AddNHA, append = TRUE) 
