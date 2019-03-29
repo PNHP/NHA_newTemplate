@@ -20,7 +20,7 @@ nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_report <- paste(nha_filename, ".docx",sep="")
 
 # Translate the Word document into a text string
-text <- readtext(nha_report)
+text <- readtext(nha_report, format=TRUE)
 text1 <- text[2]
 text1 <- as.character(text1)
 text1 <- gsub("\r?\n|\r", " ", text1)
@@ -41,20 +41,26 @@ PROTECTED_LANDS <- selected_nha$PROTECTED_LANDS
 Description <- rm_between(text1, '|DESC_B|', '|DESC_E|', fixed=TRUE, extract=TRUE)[[1]]
 ThreatRecP <- rm_between(text1, '|THRRECP_B|', '|THRRECP_E|', fixed=TRUE, extract=TRUE)[[1]] 
 ThreatRecB <- rm_between(text1, '|THRRECB_B|', '|THRRECB_E|', fixed=TRUE, extract=TRUE)[[1]] 
-References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]] 
+References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]]
 Photo1 <- rm_between(text1, '|PHOTO3_B|', '|PHOTO3_E|', fixed=TRUE, extract=TRUE)[[1]] 
+DateTime <- Sys.time()
+#round(DateTime, unit="day") # to pull out just date--use to select and append vs overwrite lines
 
 # Create a vector to add to the NHA database
-AddNHA <- as.data.frame(cbind(SITE_NAME, NHA_JOIN_ID, SIG_RANK, Muni, USGS_QUAD, OLD_SITE_NAME, ASSOC_NHA, PROTECTED_LANDS, Description, ThreatRecP, ThreatRecB, References))
+AddNHA <- as.data.frame(cbind(SITE_NAME, NHA_JOIN_ID, SIG_RANK, Muni, USGS_QUAD, OLD_SITE_NAME, ASSOC_NHA, PROTECTED_LANDS, Description, ThreatRecP, ThreatRecB, References, DateTime))
 
 #Connect to database and add new data
 
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
 
 src_dbi(TRdb) #check structure of database
-#dbCreateTable(TRdb, "NHAReport", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
+dbCreateTable(TRdb, "NHAReport2", AddNHA) #This should only be run the first time, to create the database table to hold the data
 
 #Add the new NHA data into the data table as a line
-dbWriteTable(TRdb, "NHAReport", value = AddNHA, append = TRUE) 
-tbl(TRdb, "NHAReport") #check do see it got added
+dbWriteTable(TRdb, "NHAReport2", value = AddNHA, append = TRUE) 
+tbl(TRdb, "NHAReport2") #check to see it was added
+
+
+
+dbDisconnect() #always disconnect at end of session

@@ -2,13 +2,20 @@
 output: word_document
 ---
 
-# `r paste(as.character(nha_siteName), "NHA")`  
-Site significance rank: |SigB| `r paste(as.character(selected_nha$SIG_RANK))` 
-NHA Join ID: `r paste(as.character(selected_nha$NHA_JOIN_ID))`  
+# `r paste(as.character(nha_siteName), "NHA")` 
+Site significance rank: **`r paste(as.character(selected_nha$SIG_RANK))`**      
+
+NHA Join ID: **`r paste(as.character(selected_nha$NHA_JOIN_ID))`**    
 
 
 <br><br><br><br>
 
+# Instructions  
+
+This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder, FOLDER PATH HERE.  
+
+<br><br><br><br>
+  
 # Overview of NHA Report Status for this Site  
 Please highlight or otherwise indicate the answers to the following questions upon completion of this site report; add details if necessary to your responses, using Word comments:  
 
@@ -66,7 +73,7 @@ STable
 ## Information from Biotics
 
 See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the site description and the threats and conservation recommendations section.  
-To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site:  
+To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site (you may have to copy and paste the links into your browser, once logged into Biotics, to get them to work):  
 
 `r Links`  
 
@@ -105,14 +112,17 @@ Secondly, this section will contain a bulleted list of known conservation issues
 
 <br><br><br><br>
 
-**Enter your specific threats and conservation recommendations bullets in the space between these lines:**
+**Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format *|Bull1_B| bullet text here |Bull1_E|, |Bull2_B| bullet text here |Bull2_E|*, etc. until you have completed all the bullets you need:**
 
 ***  
-|THRRECB_B|  
+|Bull1_B| *bullet text 1, between these tags, Please do not delete these tags!!* |Bull1_E| 
 
-*enter text here, between these tags. Please do not delete the tags!!*
-  
-|THRRECB_E|  
+|Bull2_B| *bullet text 2, between these tags, Please do not delete these tags!!* |Bull2_E|   
+
+|Bull3_B| *bullet text 3, between these tags, Please do not delete these tags!!* |Bull3_E|  
+
+*add as many additional, sequentially numbered and tagged bullets as needed*  
+
 
 ***  
 
@@ -173,20 +183,20 @@ Please indicate whether the information below is correct. Use Word comments to f
 **USGS quads:** `r selected_nha$USGS_QUAD`  
 **Previous CNHI reference:** `r selected_nha$OLD_SITE_NAME`  
 **Associated NHAs:** `r selected_nha$ASSOC_NHA`   
-**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`
-**Acreage:** `r round(selected_nha$Acres, -1)` acres
+**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`  
+**Acreage:** `r signif(selected_nha$Acres, digits=0)` acres
 
 Please cite this Natural Heritage Area as:  
 Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
 
 <br><br><br><br>
 
-Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site:
+Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site. Please delete any unused photo sections, if you have less than 3 photos:
 
 ***
 **Photo one**  
 
-1. Photographer Name: |P1N_B| *enter name here.*  |P1N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P1N_B| *enter name here.*  |P1N_E|
 2. Photo caption: |P1C_B| *enter short description of photo here* |P1C_E|
 3. Photo file name: |P1F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P1F_E|
   
@@ -200,7 +210,7 @@ Do you have pictures of either the site, or the species present at the site? If 
 **Photo two**
 
 
-1. Photographer Name: |P2N_B| *enter name here.*  |P2N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P2N_B| *enter name here.*  |P2N_E|
 2. Photo caption: |P2C_B| *enter short description of photo here* |P2C_E|
 3. Photo file name: |P2F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P2F_E|
   
@@ -214,7 +224,7 @@ Do you have pictures of either the site, or the species present at the site? If 
  
 **Photo three**  
 
-1. Photographer Name: |P3N_B| *enter name here.*  |P3N_E|
+1. Photographer Name and affiliation (e.g. Pete Woods, PNHP): |P3N_B| *enter name here.*  |P3N_E|
 2. Photo caption: |P3C_B| *enter short description of photo here* |P3C_E|
 3. Photo file name: |P3F_B| *enter name of photo file uploaded to folder here, including format (eg.jpg, .png).* |P3F_E|   
   
