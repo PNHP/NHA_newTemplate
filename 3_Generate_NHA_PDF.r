@@ -39,25 +39,30 @@ TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heri
 src_dbi(TRdb) #check structure of database
 tbl(TRdb, "NHAReport2")
 
+# get the data
 MyQuery <- dbSendQuery(TRdb, "SELECT * FROM NHAReport2 WHERE SITE_NAME = ?")
 dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
 my_data <- dbFetch(MyQuery) #this works!
-
 #ensure you are pulling out the most recent date only for each site (a work-around until I figure out how to selectively overwrite records...)
 LData <- my_data %>% 
     group_by(SITE_NAME) %>% 
     top_n(1, DateTime)
 
 #Query database to extract relevant data
+# get the photos
+tbl(TRdb, "Photos")
+MyQuery <- dbSendQuery(TRdb, "SELECT * FROM Photos WHERE SITE_NAME = ?")
+dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
+my_photos <- dbFetch(MyQuery) #this works!
 
 ## Write the output document for the site ###############
 setwd(here("output"))
 # knit2pdf errors for some reason...just knit then call directly
-knit(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
-call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
-# call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
-system(call)
-system(call) # 2nd run to apply citation numbers
+knit2pdf(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
+#knit(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
+#call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
+#system(call)
+#system(call) # 2nd run to apply citation numbers
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
