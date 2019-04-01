@@ -4,7 +4,11 @@
 \usepackage{geometry}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{array}
-\usepackage{xcolor}
+%\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{graphicx}
+%\graphicspath{ {NHA_pictures/} }
+\usepackage{wrapfig}
 
 \geometry{letterpaper, top=0.45in, bottom=0.75in, left=0.75in, right=0.75in}
 \pagestyle{fancy} \fancyhf{} \renewcommand\headrulewidth{0pt} %strip default header/footer stuff
@@ -19,26 +23,33 @@
 Significance Rank: {\Sexpr{selected_nha$SIG_RANK}}\
 \medskip
 
+% image
+\begin{wrapfigure}{R}{0.5\textwidth}
+  \includegraphics[width=0.49\textwidth]{NHA_pictures/TownHillBarrenP1.jpg} % need to not hard code the file
+  \caption{ \Sexpr{paste(my_photos$P1C)} }
+\end{wrapfigure}
 % Site Description
 \noindent
 {\Sexpr{as.character(LData$Description)}}\
+
 \medskip
+
 
 % Species Table
 \begin{table}[h]
-\small
-\centering
-\begin{tabular}{p{3in}cccccc}      %{m{2.8cm}m{5cm}P{2cm}m{5.7cm}}
-\hline
-Species or Natural Community Name &  & Global & State & PA Legal Status & LastSeen	& Quality \\
-\hline
-<<label=longtable, echo=FALSE, results='asis'>>=
-for(i in 1:nrow(SD_speciesTable)){
-  cat(paste0(SD_speciesTable$SCOMNAME[i]," (\\textit{",SD_speciesTable$SNAME[i],"}) ","&", SD_speciesTable$ELEMENT_TYPE[i], "&", SD_speciesTable$G_RANK[i], "&", SD_speciesTable$S_RANK[i], "&", paste0(SD_speciesTable$S_PROTECTI[i]," (",SD_speciesTable$PBSSTATUS[i],")"), "&", SD_speciesTable$LAST_OBS_D[i], "&", SD_speciesTable$BASIC_EO_R[i],"\\\\" ) )
-}
+ \small
+  \centering
+   \begin{tabular}{p{3in}cccccc}
+    \hline
+    Species or Natural Community Name &  & Global & State & PA Legal Status & LastSeen	& Quality \\
+    \hline
+    <<label=speciestable, echo=FALSE, results='asis'>>=
+    for(i in 1:nrow(SD_speciesTable)){
+      cat(paste0(SD_speciesTable$SCOMNAME[i]," (\\textit{",SD_speciesTable$SNAME[i],"}) ","&", SD_speciesTable$ELEMENT_TYPE[i], "&", SD_speciesTable$G_RANK[i], "&",     SD_speciesTable$S_RANK[i], "&", paste0(SD_speciesTable$S_PROTECTI[i]," (",SD_speciesTable$PBSSTATUS[i],")"), "&", SD_speciesTable$LAST_OBS_D[i], "&", SD_speciesTable$BASIC_EO_R[i],"\\\\" ) )
+    }
 @
-\\ \hline                      
-\end{tabular}
+    \\ \hline                      
+   \end{tabular}
 \end{table}
 
 \noindent
@@ -56,7 +67,9 @@ Specific threats and stresses to the elements present at this site, as well as c
   \item {\Sexpr{as.character(LData$TRB2)}\\   
   \item {\Sexpr{as.character(LData$TRB3)}\\  
 \end{itemize}
+
 \bigskip
+
 % Location and Additional Infomation
 \noindent\textbf{\underline{Location}}\\
 \smallskip

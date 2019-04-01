@@ -10,7 +10,7 @@
 # To Do List/Future ideas:
 #
 #-------------------------------------------------------------------------------
-setwd("H:/Github_NHA/NHA_newTemplate/")
+setwd(here())
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
@@ -30,11 +30,8 @@ require(dplyr)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
-
-arc.check_product()
-
-## Network Paths and such
-biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
+# load in the paths and settings file
+source(here("0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
@@ -88,7 +85,7 @@ ELCODE_sub <- ELCODE_TR %>%
 
 ######### Write the output document for the site ###############
 
-rmarkdown::render(input=here("NHAREport_part1v2.Rmd"), output_format="word_document", 
+rmarkdown::render(input=here("template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename, ".docx",sep=""),
                   output_dir = here("output"))
 
