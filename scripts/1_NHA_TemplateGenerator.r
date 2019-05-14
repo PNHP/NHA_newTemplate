@@ -31,10 +31,10 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
 # load in the paths and settings file
-source(here("0_PathsAndSettings.r"))
+source(here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
-nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
@@ -42,7 +42,7 @@ nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 ## Build the Species Table #########################
 
 # open the related species table and get the rows that match the NHA join id from above
-nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
+nha_relatedSpecies <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
 
