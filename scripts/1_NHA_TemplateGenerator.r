@@ -10,7 +10,6 @@
 # To Do List/Future ideas:
 #
 #-------------------------------------------------------------------------------
-setwd(here())
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
@@ -34,7 +33,7 @@ require(dbplyr)
 source(here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
-nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))
+nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
