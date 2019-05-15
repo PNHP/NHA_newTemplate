@@ -2,11 +2,11 @@
 # Name:        0_COAdb_creator.r
 # Purpose:     Create an empty, new COA databases
 # Author:      Christopher Tracey
-# Created:     2019-02-14
-# Updated:     2019-02-20
+# Created:     2019-03-15
+# Updated:     
 #
 # Updates:
-# * 2019-02-20 - minor cleanup and documentation
+# * 2019-03-15 - minor cleanup and documentation
 # To Do List/Future ideas:
 #
 #-------------------------------------------------------------------------------
