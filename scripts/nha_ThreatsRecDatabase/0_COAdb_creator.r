@@ -23,7 +23,7 @@ databasename <- "nha_recs.sqlite"
 databasename <- here("_data","databases",databasename)
 
 # connect to the database
-db <- dbConnect(SQLite(), dbname=databasename) # creates an empty COA database
+db <- dbConnect(SQLite(), dbname=databasename) # creates an empty NHA database
 
 # disconnect the db
 dbDisconnect(db)

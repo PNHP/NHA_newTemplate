@@ -63,28 +63,27 @@ Links <- paste(Sname_link, URL_EOs, sep="")
 
 #Connect to threats and recommendations SQLite database, pull in data
 
-TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
+#databasename <- "nha_recs.sqlite" 
+#databasename <- here("_data","databases",databasename)
+
+TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
 
-ELCODE_TR <- tbl(TRdb, "ELCODE_threatsrecs_test")
-TRtable <- tbl(TRdb, "ThreatsrecsTable_test")
+ElementTR <- tbl(TRdb, "ElementThreatRecs")
+ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
 
 #ensure key column is encoded the same way in both linked tables
-ELCODE_TR <- ELCODE_TR %>%  
-  mutate(TRID = as.numeric(TRID))
-
-TRtable <- TRtable %>%  
-  mutate(TRID = as.numeric(TRID))
+ELCODE_TR <- ElementTR %>%
+  inner_join(ThreatRecTable)
 
 #select out subset of records to match species table at selected site
 ELCODE_sub <- ELCODE_TR %>% 
   filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
-  select(ELCODE, SNAME, TRID)
-
+  select(ELCODE, SNAME)
 
 ######### Write the output document for the site ###############
 
-rmarkdown::render(input=here("template_NHAREport_part1v2.Rmd"), output_format="word_document", 
+rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename, ".docx",sep=""),
-                  output_dir = here("output"))
+                  output_dir = here("_data","output"))
 
