@@ -65,8 +65,8 @@ Links <- paste(Sname_link, URL_EOs, sep="")
 
 #Connect to threats and recommendations SQLite database, pull in data
 
-#databasename <- "nha_recs.sqlite" 
-#databasename <- here("_data","databases",databasename)
+databasename <- "nha_recs.sqlite" 
+databasename <- here("_data","databases",databasename)
 
 TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
@@ -74,14 +74,9 @@ TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 ElementTR <- tbl(TRdb, "ElementThreatRecs")
 ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
 
-#ensure key column is encoded the same way in both linked tables
+#join general threats/recs table with the element table 
 ELCODE_TR <- ElementTR %>%
   inner_join(ThreatRecTable)
-
-#select out subset of records to match species table at selected site
-ELCODE_sub <- ELCODE_TR %>% 
-  filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
-  select(ELCODE, SNAME)
 
 ######### Write the output document for the site ###############
 

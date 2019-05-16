@@ -141,7 +141,8 @@ Included below is species-specific information on general conservation threats a
 ``` {r EO Threats Database, echo=FALSE}
 
 #join tables and report threats and recs for selected species
-Sel_TR <- inner_join(ELCODE_sub, ELCODE_TR, copy=TRUE) %>%
+Sel_TR <- ELCODE_TR %>% 
+  filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
   select(SNAME, CategoryName, Threats, Recs, Citation_Full) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
