@@ -1,12 +1,15 @@
 #-------------------------------------------------------------------------------
 # Name:        1_ETimporter.r
-# Purpose:     
+# Purpose:     Copy the lastest Element Tracking list and prep it for use for 
+#              the NHAS
 # Author:      Christopher Tracey
 # Created:     2019-05-15
 # Updated:     
 #
 # Updates:
 # To Do List/Future ideas:
+# * fix dates on import
+# * change file names
 #
 #-------------------------------------------------------------------------------
 
@@ -20,25 +23,28 @@ require(RSQLite)
 # Set input paths ----
 databasename <- "nha_recs.sqlite" 
 databasename <- here("_data","databases",databasename)
+ET_path <- "P://Conservation Programs/Natural Heritage Program/Data Management/Biotics Database Areas/Element Tracking/current element lists"
+# this is the path to the element tracking list folder on the p-drive in Pittsburgh.
 
 #Import current Element Tracking (ET) file into NHA database
 
 ET_path <- "P://Conservation Programs/Natural Heritage Program/Data Management/Biotics Database Areas/Element Tracking/current element lists"
 
 #get the threats template
+
 ET_file <- list.files(path=ET_path, pattern=".xlsx$")  # --- make sure your excel file is not open.
 ET_file
-#look at the output and choose which shapefile you want to run
-#enter its location in the list (first = 1, second = 2, etc)
+# look at the output and choose which shapefile you want to run
+# enter its location in the list (first = 1, second = 2, etc)
 n <- 3
 ET_file <- ET_file[n]
-
+# read the ET spreadsheet into a data frame
 ET <- read.xlsx(xlsxFile=paste(ET_path,ET_file, sep="/"), skipEmptyRows=FALSE, rowNames=FALSE)  #, sheet=COA_actions_sheets[n]
 
 # cleanup
 rm(n)
 
-# subset to tracked species
+# subset to tracked or watchlist species
 ET <- ET[which(ET$TRACKING.STATUS=="Y"|ET$TRACKING.STATUS=="W"),]
 
 # rename columns to match geodatabase names, where overlap occurs 
@@ -50,12 +56,10 @@ ET$SRANK.CHANGE.DATE <- convertToDate(ET$SRANK.CHANGE.DATE, origin="1900-01-01")
 ET$SRANK.REVIEW.DATE <- convertToDate(ET$SRANK.REVIEW.DATE, origin="1900-01-01")
 ET$PBS.DATE <- convertToDate(ET$PBS.DATE, origin="1900-01-01")
 
-#write to database
+# write complelete ET to database
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 dbWriteTable(db, "ET", ET, overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
-
-
 
 #Import current threats/recs tables
 
@@ -65,10 +69,7 @@ ThreatRecTable <- read.xlsx(xlsxFile=ThreatRecPath, sheet="ThreatRecTable", skip
 
 ThreatRecTable <- read.xlsx(xlsxFile=ThreatRecPath, sheet="ThreatRecTable", skipEmptyRows=FALSE, rowNames=FALSE)
 
-
 #write to database
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 dbWriteTable(db, "ThreatRecTable", ThreatRecTable, overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
-
-
