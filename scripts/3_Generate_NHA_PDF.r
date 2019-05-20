@@ -14,47 +14,55 @@
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-require(here)
+  require(here)
 if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
-require(arcgisbinding)
+  require(arcgisbinding)
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
-require(RSQLite)
+  require(RSQLite)
 if (!requireNamespace("knitr", quietly = TRUE)) install.packages("knitr")
-require(knitr)
+  require(knitr)
 if (!requireNamespace("xtable", quietly = TRUE)) install.packages("xtable")
-require(xtable)
+  require(xtable)
 if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-require(dplyr)
+  require(dplyr)
 if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
-require(DBI)
+  require(DBI)
+if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
+  require(dbplyr)
+
+# load in the paths and settings file
+source(here("0_PathsAndSettings.r"))
 
 # Connect to database containing NHA report content
-
 TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
 
 src_dbi(TRdb) #check structure of database
 tbl(TRdb, "NHAReport2")
 
+# get the data
 MyQuery <- dbSendQuery(TRdb, "SELECT * FROM NHAReport2 WHERE SITE_NAME = ?")
 dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
 my_data <- dbFetch(MyQuery) #this works!
-
 #ensure you are pulling out the most recent date only for each site (a work-around until I figure out how to selectively overwrite records...)
-
 LData <- my_data %>% 
     group_by(SITE_NAME) %>% 
     top_n(1, DateTime)
 
 #Query database to extract relevant data
+# get the photos
+tbl(TRdb, "Photos")
+MyQuery <- dbSendQuery(TRdb, "SELECT * FROM Photos WHERE SITE_NAME = ?")
+dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
+my_photos <- dbFetch(MyQuery) #this works!
 
 ## Write the output document for the site ###############
 setwd(here("output"))
 # knit2pdf errors for some reason...just knit then call directly
-knit(here("Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
-call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
-# call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
-system(call)
-system(call) # 2nd run to apply citation numbers
+knit2pdf(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
+#knit(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
+#call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
+#system(call)
+#system(call) # 2nd run to apply citation numbers
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 

@@ -10,7 +10,6 @@
 # To Do List/Future ideas:
 #
 #-------------------------------------------------------------------------------
-setwd("H:/Github_NHA/NHA_newTemplate/")
 
 # check and load required libraries  
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
@@ -30,14 +29,11 @@ require(dplyr)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 require(dbplyr)
 
-
-arc.check_product()
-
-## Network Paths and such
-biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
+# load in the paths and settings file
+source(here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
-nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
@@ -45,7 +41,7 @@ nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 ## Build the Species Table #########################
 
 # open the related species table and get the rows that match the NHA join id from above
-nha_relatedSpecies <- arc.open(here("NHA_newTemplate.gdb","NHA_SpeciesTable"))
+nha_relatedSpecies <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
 
@@ -67,28 +63,22 @@ Links <- paste(Sname_link, URL_EOs, sep="")
 
 #Connect to threats and recommendations SQLite database, pull in data
 
-TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
+databasename <- "nha_recs.sqlite" 
+databasename <- here("_data","databases",databasename)
+
+TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
 
-ELCODE_TR <- tbl(TRdb, "ELCODE_threatsrecs_test")
-TRtable <- tbl(TRdb, "ThreatsrecsTable_test")
+ElementTR <- tbl(TRdb, "ElementThreatRecs")
+ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
 
-#ensure key column is encoded the same way in both linked tables
-ELCODE_TR <- ELCODE_TR %>%  
-  mutate(TRID = as.numeric(TRID))
-
-TRtable <- TRtable %>%  
-  mutate(TRID = as.numeric(TRID))
-
-#select out subset of records to match species table at selected site
-ELCODE_sub <- ELCODE_TR %>% 
-  filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
-  select(ELCODE, SNAME, TRID)
-
+#join general threats/recs table with the element table 
+ELCODE_TR <- ElementTR %>%
+  inner_join(ThreatRecTable)
 
 ######### Write the output document for the site ###############
 
-rmarkdown::render(input=here("NHAREport_part1v2.Rmd"), output_format="word_document", 
+rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename, ".docx",sep=""),
-                  output_dir = here("output"))
+                  output_dir = here("_data","output"))
 

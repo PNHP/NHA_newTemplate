@@ -32,6 +32,7 @@ biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+### nha <- arc.open("COA.pgh-GIS0.sde/PNHP.DBO.NHA_Core") # closer to opening over SDE
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)

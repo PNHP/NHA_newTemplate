@@ -141,12 +141,13 @@ Included below is species-specific information on general conservation threats a
 ``` {r EO Threats Database, echo=FALSE}
 
 #join tables and report threats and recs for selected species
-Sel_TR <- inner_join(ELCODE_sub, TRtable, copy=TRUE) %>%
-  select(SNAME, ThreatRec_Name, Threats, Recs, Citation_Full) %>% collect()
+Sel_TR <- ELCODE_TR %>% 
+  filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
+  select(SNAME, CategoryName, Threats, Recs, Citation_Full) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
 
-Cat_Count <- Sel_TR %>% add_count(ThreatRec_Name) %>% select(ThreatRec_Name, n)
+Cat_Count <- Sel_TR %>% add_count(CategoryName) %>% select(CategoryName, n)
 ThreatCatTable <- flextable(head(Cat_Count))
 ThreatCatTable <- autofit(ThreatCatTable)
 ThreatCatTable
@@ -172,7 +173,7 @@ Below, see the list of references associated with the automated threats and reco
 
 ```{r References, echo=FALSE}
 
-Sel_Citations <- inner_join(ELCODE_sub, TRtable, copy=TRUE) %>%
+Sel_Citations <- inner_join(ELCODE_sub, Sel_TR, copy=TRUE) %>%
   select(Citation_Full) %>% collect()
 do.call(paste, Sel_Citations)
 ```
