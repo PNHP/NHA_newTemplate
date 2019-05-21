@@ -173,7 +173,7 @@ Below, see the list of references associated with the automated threats and reco
 
 ```{r References, echo=FALSE}
 
-Sel_Citations <- inner_join(ELCODE_sub, Sel_TR, copy=TRUE) %>%
+Sel_Citations <- Sel_TR %>%
   select(Citation_Full) %>% collect()
 do.call(paste, Sel_Citations)
 ```
