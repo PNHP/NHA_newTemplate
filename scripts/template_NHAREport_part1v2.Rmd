@@ -170,13 +170,13 @@ Below, see the list of references associated with the automated threats and reco
 |REF_E|   
 
 ***  
-
 ```{r References, echo=FALSE}
 
 Sel_Citations <- Sel_TR %>%
   select(Citation_Full) %>% collect()
 do.call(paste, Sel_Citations)
 ```
+
 # Location  
 Please indicate whether the information below is correct. Use Word comments to flag any issues.  
 

@@ -56,7 +56,6 @@ ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
 ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
 
 #generate URLs for each EO at site
-
 URL_EOs <- sapply(seq_along(ptreps_selected$EO_ID), function(x)  paste("https://bioticspa.natureserve.org/biotics/services/page/Eo/",ptreps_selected$EO_ID[x],".html", sep=""))
 
 URL_EOs <- sapply(seq_along(URL_EOs), function(x) paste("(",URL_EOs[x],")", sep=""))
@@ -64,22 +63,24 @@ Sname_link <- sapply(seq_along(ptreps_selected$SNAME), function(x) paste("[",ptr
 Links <- paste(Sname_link, URL_EOs, sep="") 
 
 #Connect to threats and recommendations SQLite database, pull in data
-
 databasename <- "nha_recs.sqlite" 
 databasename <- here("_data","databases",databasename)
 
 TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
 
-ElementTR <- tbl(TRdb, "ElementThreatRecs")
-ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
+# trying this Chris' way because its awesomer....
+ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs;"))
+ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable "))
+#ElementTR <- tbl(TRdb, "ElementThreatRecs")
+#ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
 
 #join general threats/recs table with the element table 
 ELCODE_TR <- ElementTR %>%
   inner_join(ThreatRecTable)
 
-######### Write the output document for the site ###############
 
+######### Write the output document for the site ###############
 rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename, ".docx",sep=""),
                   output_dir = here("_data","output"))
