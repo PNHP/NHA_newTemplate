@@ -1,5 +1,18 @@
+#-------------------------------------------------------------------------------
+# Name:        0_PathsAndSettings.r
+# Purpose:     settings and paths for the NHA report creation tool.
+# Author:      Christopher Tracey
+# Created:     2019-03-21
+# Updated:     2019-05-22
+#
+# Updates:
+# 
+# To Do List/Future ideas:
+#
+#-------------------------------------------------------------------------------
 
 
+# options
 options(useFancyQuotes = FALSE)
 
 # load the arcgis license
