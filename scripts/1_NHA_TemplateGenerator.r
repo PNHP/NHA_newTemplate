@@ -99,15 +99,15 @@ mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/Map
 basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
 # plot it
 tmap_mode("plot")
-nha_map <- tm_shape(basetiles) +
+nha_map <- tm_shape(basetiles, unit="m") +
   tm_rgb() +
   tm_shape(nha_sf) +
   tm_borders("red", lwd=1.5)+
   tm_legend(show=FALSE) + 
   tm_layout(attr.color="white") +
-  tm_scale_bar()
+  tm_compass(type="arrow", position=c("left","bottom")) +
+  tm_scale_bar(position=c("center","bottom"))
 tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep=""), units="in", width=7) 
-
 
 ######### Write the output document for the site ###############
 rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
