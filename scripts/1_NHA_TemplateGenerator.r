@@ -30,6 +30,12 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
 if (!requireNamespace("rmarkdown", quietly = TRUE)) install.packages("rmarkdown")
   require(rmarkdown)
+if (!requireNamespace("tmap", quietly = TRUE)) install.packages("tmap")
+  require(tmap)
+if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenStreetMap")
+  require(OpenStreetMap)
+
+# note: we need to install 64bit java: https://www.java.com/en/download/manual.jsp
 
 # load in the paths and settings file
 source(here("scripts", "0_PathsAndSettings.r"))
@@ -39,6 +45,9 @@ nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
+
+# convert geometry to simple features for the map
+nha_sf <- arc.data2sf(selected_nha)
 
 ## Build the Species Table #########################
 
@@ -80,13 +89,32 @@ ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHER
 ELCODE_TR <- ElementTR %>%
   inner_join(ThreatRecTable)
 
-
+# set up the temp directories
 NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename,sep="/")
 dir.create(NHAdest1, showWarnings = F) # make a folder for each site
 dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder for each site
+
+# make the maps
+mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
+basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
+# plot it
+tmap_mode("plot")
+nha_map <- tm_shape(basetiles) +
+  tm_rgb() +
+  tm_shape(nha_sf) +
+  tm_borders("red", lwd=1.5)+
+  tm_legend(show=FALSE) + 
+  tm_layout(attr.color="white") +
+  tm_scale_bar()
+tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep=""), units="in", width=7) 
+
 
 ######### Write the output document for the site ###############
 rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=paste(nha_filename,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep=""),
                   output_dir=NHAdest1)
 
+# delete the map, after its included in the markdown
+fn <- paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep="")
+if (file.exists(fn)) #Delete file if it exists
+  file.remove(fn)
