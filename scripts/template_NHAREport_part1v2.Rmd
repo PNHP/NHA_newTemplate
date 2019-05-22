@@ -12,7 +12,7 @@ NHA Join ID: **`r paste(as.character(selected_nha$NHA_JOIN_ID))`**
 
 # Instructions  
 
-This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder, FOLDER PATH HERE.  
+This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder: `r paste(NHAdest1,"photos", sep="/")`.  
 
 <br><br><br><br>
   
@@ -33,7 +33,7 @@ Site Description - this should be about a one paragraph description of the site 
 <br><br><br><br>
 Paragraphs can be added to supply more detail about each species or group of species at this NHA, if you want. If information is added, try to keep it general and not have a lot of detail about each specific taxon as it will help to keep the sites as current as possible without a lot of ongoing editing-remember, we are going to rely on the factsheets for that purpose.  For example, it would be good to say something like "The dragonflies at this site depend on clean water to breed" as that statement would likely be true even if we added or subtracted species to the list.
 
-This brief description from the NHA geodatabase reads: **`r selected_nha[7]$BRIEF_DESC`**  
+This brief description from the NHA geodatabase for this site reads: **`r selected_nha[7]$BRIEF_DESC`**  
 
 <br><br><br><br>
 

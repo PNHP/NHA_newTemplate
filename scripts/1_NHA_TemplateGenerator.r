@@ -70,8 +70,9 @@ TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
 
 # trying this Chris' way because its awesomer....
-ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs;"))
-ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable "))
+ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELCODE IN (", paste(toString(sQuote(SD_speciesTable$ELCODE)), collapse = ", "), ");"))
+
+ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE ID IN (", paste(toString(sQuote(ElementTR$ID)), collapse = ", "), ");"))
 #ElementTR <- tbl(TRdb, "ElementThreatRecs")
 #ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
 
@@ -80,8 +81,12 @@ ELCODE_TR <- ElementTR %>%
   inner_join(ThreatRecTable)
 
 
+NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename,sep="/")
+dir.create(NHAdest1, showWarnings = F) # make a folder for each site
+dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder for each site
+
 ######### Write the output document for the site ###############
 rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
-                  output_file=paste(nha_filename, ".docx",sep=""),
-                  output_dir = here("_data","output"))
+                  output_file=paste(nha_filename,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep=""),
+                  output_dir=NHAdest1)
 
