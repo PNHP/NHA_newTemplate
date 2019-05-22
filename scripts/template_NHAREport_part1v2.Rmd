@@ -142,8 +142,7 @@ Included below is species-specific information on general conservation threats a
 
 #join tables and report threats and recs for selected species
 Sel_TR <- ELCODE_TR %>% 
-  filter(ELCODE %in% SD_speciesTable$ELCODE) %>%
-  select(SNAME, CategoryName, Threats, Recs, Citation_Full) %>% collect()
+  select(SNAME, CategoryName, Threats, Recs) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
 
@@ -160,7 +159,7 @@ do.call(paste, Sel_TR)
 
 # References  
 
-Below, see the list of references associated with the automated threats and recommendations bullets. Please copy and paste below the references that are associated with bullets which you actually used to write this site report.  
+Below, see the list of references associated with the automated threats and recommendations bullets. Please copy and paste the references that are associated with bullets which you actually used to write this site report.  
 
 ***  
 |REF_B|  
@@ -172,7 +171,7 @@ Below, see the list of references associated with the automated threats and reco
 ***  
 ```{r References, echo=FALSE}
 
-Sel_Citations <- Sel_TR %>%
+Sel_Citations <- ELCODE_TR %>%
   select(Citation_Full) %>% collect()
 do.call(paste, Sel_Citations)
 ```
@@ -191,6 +190,14 @@ Please cite this Natural Heritage Area as:
 Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
 
 <br><br><br><br>
+
+
+# Map  
+
+![Core habitat boundaries of `r selected_nha$SITE_NAME` NHA](`r paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep="")`)
+
+
+# Photos    
 
 Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site. Please delete any unused photo sections, if you have less than 3 photos:
 
