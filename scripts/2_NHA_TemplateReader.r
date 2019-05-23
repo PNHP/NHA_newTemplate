@@ -1,33 +1,23 @@
-if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-  require(here)
-if (!requireNamespace("readtext", quietly = TRUE)) install.packages("readtext")
-  require(readtext)
-if (!requireNamespace("qdapRegex", quietly = TRUE)) install.packages("qdapRegex")
-  require(qdapRegex)
-if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr")
-  require(textreadr)
-if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-  require(dplyr)
-if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
-  require(dbplyr)
 
 # load in the paths and settings file
 source(here("0_PathsAndSettings.r"))
 
-setwd(here())
 
 #Pull in the selected NHA data
-setwd(here("Edited_WordTemplates"))
 
-nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
+#File path for completed Word documents
+nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'") #input which NHA site you want
 nha_siteName <- selected_nha$SITE_NAME
 
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_report <- paste(nha_filename, ".docx",sep="")
+NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename,sep="/")
+
+#File path for completed Word documents
 
 # Translate the Word document into a text string
-text <- readtext(nha_report, format=TRUE)
+text <- readtext(paste0(NHAdest1, "/",nha_report), format=TRUE) #I manually removed date from the "edited" version of the Word doc to pull this in--not sure if there is a better approach to finding the right file?
 text1 <- text[2]
 text1 <- as.character(text1)
 text1 <- gsub("\r?\n|\r", " ", text1)
