@@ -96,3 +96,8 @@ output/TownHillBarren.docx
 output/TownHillBarren.pdf
 output/TownHillBarren.docx
 .here
+_data/NHACoreHabitat.lyr
+scripts.Rproj
+_data/NHA_newTemplate.gdb/a00000001.freelist
+_data/NHA_newTemplate.gdb/a00000004.freelist
+_data/NHA_newTemplate.gdb/timestamps
