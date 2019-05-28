@@ -11,7 +11,7 @@
 #
 #-------------------------------------------------------------------------------
 
-# check and load required libraries  
+# check and load required libraries
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
   require(here)
 if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
@@ -34,6 +34,8 @@ if (!requireNamespace("tmap", quietly = TRUE)) install.packages("tmap")
   require(tmap)
 if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenStreetMap")
   require(OpenStreetMap)
+if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
+require(openxlsx)
 
 # note: we need to install 64bit java: https://www.java.com/en/download/manual.jsp
 
@@ -42,9 +44,22 @@ source(here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")
+
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Carnahan Run at Stitts Run Road' AND STATUS ='NP'")
 nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
+nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
+nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
+
+# shorten file path name and retain beginning and end of site name, if file name is greater than 20 characters (may not be necessary)
+# if(nchar(nha_filename) < 20) {
+# nha_filename <- nha_filename
+# } else {
+# nha_filenameb <- substr(nha_filename, 1, 10)
+# nha_filenamee <- substr(nha_filename,(nchar(nha_filename)+1)-10,nchar(nha_filename)) 
+# nha_filename <- paste(nha_filenameb, nha_filenamee, sep="")
+# }
+
 
 # convert geometry to simple features for the map
 nha_sf <- arc.data2sf(selected_nha)
@@ -56,7 +71,7 @@ nha_relatedSpecies <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_SpeciesT
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
 
-SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R")] # subset to columns that are needed.
+SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R","SENSITIVE_")] # subset to columns that are needed.
 
 eoid_list <- paste(toString(SD_speciesTable$EO_ID), collapse = ",")  # make a list of EOIDs to get data from
 ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse = ",")  # make a list of EOIDs to get data from
@@ -118,3 +133,16 @@ rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output
 fn <- paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep="")
 if (file.exists(fn)) #Delete file if it exists
   file.remove(fn)
+
+#add record of creation of this site to running Excel spreadsheet of NHA site accounts
+
+# wb <- c("SITE_NAME","COUNTY","ASSIGNED_WRITER","TEMPLATE_COMPLETED","PDF_CREATED","NOTES")
+# write.xlsx(t(wb),file="P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", colNames=FALSE) #Create workbook for the first time
+
+NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY,ASSIGNED_WRITER="NA",TEMPLATE_COMPLETED="NA",PDF_CREATED="NA",NOTES="NA") #create new row for dataframe for current site 
+
+wb <- loadWorkbook("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx") #import excel file
+sheet1 <- read.xlsx(wb,sheet = 1) #select sheet of interest
+df <- rbind(sheet1, NHA_rec[!NHA_rec$SITE_NAME %in% (sheet1$SITE_NAME),]) #add new row to dataframe only if the site is not already within the dataframe
+writeData(wb, sheet=1, df) #write updated dataframe to file
+saveWorkbook(wb,"P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", overwrite=TRUE) #save excel file

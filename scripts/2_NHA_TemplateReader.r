@@ -1,33 +1,33 @@
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-  require(here)
+require(here)
 if (!requireNamespace("readtext", quietly = TRUE)) install.packages("readtext")
-  require(readtext)
+require(readtext)
 if (!requireNamespace("qdapRegex", quietly = TRUE)) install.packages("qdapRegex")
-  require(qdapRegex)
+require(qdapRegex)
 if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr")
-  require(textreadr)
-if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
-  require(dplyr)
-if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
-  require(dbplyr)
+require(textreadr)
+
 
 # load in the paths and settings file
-source(here("0_PathsAndSettings.r"))
+source(here("scripts", "0_PathsAndSettings.r"))
 
-setwd(here())
 
 #Pull in the selected NHA data
-setwd(here("Edited_WordTemplates"))
 
-nha <- arc.open(here("NHA_newTemplate.gdb","NHA_Core"))
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'") #input which NHA site you want
+#File path for completed Word documents
+nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Carnahan Run at Stitts Run Road' AND STATUS='NP'")
+
 nha_siteName <- selected_nha$SITE_NAME
-
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
-nha_report <- paste(nha_filename, ".docx",sep="")
+nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
+nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
+date <- "_20190528"#choose file date of interest--or could code to automatically select most recent date, not sure how to do this
+nha_report <- paste(nha_filename,date,".docx", sep="")
+NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename, nha_report,sep="/")
 
 # Translate the Word document into a text string
-text <- readtext(nha_report, format=TRUE)
+text <- readtext(NHAdest1, format=TRUE)
 text1 <- text[2]
 text1 <- as.character(text1)
 text1 <- gsub("\r?\n|\r", " ", text1)
