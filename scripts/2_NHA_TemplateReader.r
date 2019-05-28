@@ -6,7 +6,12 @@ if (!requireNamespace("qdapRegex", quietly = TRUE)) install.packages("qdapRegex"
 require(qdapRegex)
 if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr")
 require(textreadr)
-
+if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
+require(arcgisbinding)
+if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
+require(RSQLite)
+if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
+require(dbplyr)
 
 # load in the paths and settings file
 source(here("scripts", "0_PathsAndSettings.r"))
