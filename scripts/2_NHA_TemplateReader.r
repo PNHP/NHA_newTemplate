@@ -1,28 +1,27 @@
 if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
-require(here)
+  require(here)
 if (!requireNamespace("readtext", quietly = TRUE)) install.packages("readtext")
-require(readtext)
+  require(readtext)
 if (!requireNamespace("qdapRegex", quietly = TRUE)) install.packages("qdapRegex")
-require(qdapRegex)
+  require(qdapRegex)
 if (!requireNamespace("textreadr", quietly = TRUE)) install.packages("textreadr")
-require(textreadr)
+  require(textreadr)
 if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgisbinding")
-require(arcgisbinding)
+  require(arcgisbinding)
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
-require(RSQLite)
+  require(RSQLite)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
-require(dbplyr)
+  require(dbplyr)
 
 # load in the paths and settings file
 source(here("scripts", "0_PathsAndSettings.r"))
 
-#Pull in the selected NHA data
-
-#File path for completed Word documents
-nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))
+# Pull in the selected NHA data ################################################
+# File path for completed Word documents
+nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))  #  I think we can probably do this without all the ArcGIS loading
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Carnahan Run at Stitts Run Road' AND STATUS='NP'")
 
-nha_siteName <- selected_nha$SITE_NAME
+nha_siteName <- selected_nha$SITE_NAME  # CT - we should probably build the next four lines into a function.
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
 nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
@@ -35,14 +34,13 @@ NHA_file <- NHA_file[n]
 # create the path to the whole file!
 NHAdest1 <- paste(NHAdest,"DraftSiteAccounts", nha_filename, NHA_file, sep="/")
 
-# Translate the Word document into a text string
+# Translate the Word document into a text string  ################################################
 text <- readtext(NHAdest1, format=TRUE)
 text1 <- text[2]
 text1 <- as.character(text1)
 text1 <- gsub("\r?\n|\r", " ", text1)
 
-# Extract individual elements of report to add to NHA database
-
+# Extract individual elements of report to add to NHA database ################################################
 #NHA information
 SITE_NAME <- nha_siteName
 NHA_JOIN_ID <- selected_nha$NHA_JOIN_ID
