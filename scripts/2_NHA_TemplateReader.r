@@ -16,7 +16,6 @@ require(dbplyr)
 # load in the paths and settings file
 source(here("scripts", "0_PathsAndSettings.r"))
 
-
 #Pull in the selected NHA data
 
 #File path for completed Word documents
@@ -27,9 +26,14 @@ nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
 nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
-date <- "_20190528"#choose file date of interest--or could code to automatically select most recent date, not sure how to do this
-nha_report <- paste(nha_filename,date,".docx", sep="")
-NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename, nha_report,sep="/")
+
+NHA_file <- list.files(path=paste(NHAdest, "DraftSiteAccounts", nha_filename, sep="/"), pattern=".docx$")  # --- make sure your excel file is not open.
+NHA_file
+# select the file number from the list below
+n <- 1
+NHA_file <- NHA_file[n]
+# create the path to the whole file!
+NHAdest1 <- paste(NHAdest,"DraftSiteAccounts", nha_filename, NHA_file, sep="/")
 
 # Translate the Word document into a text string
 text <- readtext(NHAdest1, format=TRUE)
