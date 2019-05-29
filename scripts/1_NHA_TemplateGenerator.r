@@ -45,31 +45,19 @@ source(here("scripts", "0_PathsAndSettings.r"))
 # open the NHA feature class and select and NHA
 nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Carnahan Run at Stitts Run Road' AND STATUS ='NP'")
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha_siteName <- selected_nha$SITE_NAME
-nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
-nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
-nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
-nha_filename <- paste(nha_filename,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
+nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
+nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
+nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
+nha_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
 
 selected_nha$nha_filename <- nha_filename
-
-# shorten file path name and retain beginning and end of site name, if file name is greater than 20 characters (may not be necessary)
-# if(nchar(nha_filename) < 20) {
-# nha_filename <- nha_filename
-# } else {
-# nha_filenameb <- substr(nha_filename, 1, 10)
-# nha_filenamee <- substr(nha_filename,(nchar(nha_filename)+1)-10,nchar(nha_filename)) 
-# nha_filename <- paste(nha_filenameb, nha_filenamee, sep="")
-# }
 
 # convert geometry to simple features for the map
 nha_sf <- arc.data2sf(selected_nha)
 
-
-
 ## Build the Species Table #########################
-
 # open the related species table and get the rows that match the NHA join id from above
 nha_relatedSpecies <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
@@ -90,6 +78,8 @@ sigrankspecieslist <- SD_speciesTable[c("SNAME","G_RANK","S_RANK","BASIC_EO_R")]
 colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "BASIC_EO_R")] <- "EORANK"
 colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "G_RANK")] <- "GRANK"
 colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "S_RANK")] <- "SRANK"
+
+sigrankspecieslist <- sigrankspecieslist[which(sigrankspecieslist$GRANK!="GNR"),]
 
 sigrankspecieslist <- merge(sigrankspecieslist, rounded_grank, by="GRANK")
 sigrankspecieslist <- merge(sigrankspecieslist, rounded_srank, by="SRANK")
@@ -139,7 +129,7 @@ ELCODE_TR <- ElementTR %>%
   inner_join(ThreatRecTable)
 
 # set up the temp directories
-NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_filename,sep="/")
+NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_foldername,sep="/")
 dir.create(NHAdest1, showWarnings = F) # make a folder for each site
 dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder for each site
 
@@ -156,7 +146,7 @@ nha_map <- tm_shape(basetiles, unit="m") +
   tm_layout(attr.color="white") +
   tm_compass(type="arrow", position=c("left","bottom")) +
   tm_scale_bar(position=c("center","bottom"))
-tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep=""), units="in", width=7) 
+tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_foldername,"_tempmap.png",sep=""), units="in", width=7) 
 
 
 
