@@ -24,6 +24,9 @@ biotics_gdb <- "W:/Heritage/Heritage_Data/Biotics_datasets.gdb"
 # NHA Databases and such
 NHA_path <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NHA_ToolsV3"
 
+# NHA database name
+nha_databasename <- here::here("_data","databases","NaturalHeritageAreas.sqlite")
+
 # threat recc database name
 databasename <- here::here("_data","databases","nha_recs.sqlite")
 

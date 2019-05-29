@@ -50,6 +50,9 @@ nha_siteName <- selected_nha$SITE_NAME
 nha_filename <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_filename <- gsub("#", "", nha_filename, fixed=TRUE)
 nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
+nha_filename <- paste(nha_filename,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
+
+selected_nha$nha_filename <- nha_filename
 
 # shorten file path name and retain beginning and end of site name, if file name is greater than 20 characters (may not be necessary)
 # if(nchar(nha_filename) < 20) {
@@ -60,9 +63,10 @@ nha_filename <- gsub("''", "", nha_filename, fixed=TRUE)
 # nha_filename <- paste(nha_filenameb, nha_filenamee, sep="")
 # }
 
-
 # convert geometry to simple features for the map
 nha_sf <- arc.data2sf(selected_nha)
+
+
 
 ## Build the Species Table #########################
 
@@ -95,16 +99,16 @@ sigrankspecieslist$rarityscore <- nha_gsrankMatrix[sigrankspecieslist$GRANK_roun
 
 sigrankspecieslist$totalscore <- sigrankspecieslist$rarityscore * sigrankspecieslist$Weight
 
-site_score <- sum(sigrankspecieslist$totalscore)
+selected_nha$site_score <- sum(sigrankspecieslist$totalscore)
 
-if(site_score==0){
-  site_rank <- "Local"
-} else if(site_score>0 & site_score<=152) {
-  site_rank <- "State"
-} else if(site_score>152 & site_score<=457) {
-  site_rank <- "Regional"
-}  else if (site_score>457) {
-  site_rank <- "Global"
+if(selected_nha$site_score==0){
+  selected_nha$site_rank <- "Local"
+} else if(selected_nha$site_score>0 & selected_nha$site_score<=152) {
+  selected_nha$site_rank <- "State"
+} else if(selected_nha$site_score>152 & selected_nha$site_score<=457) {
+  selected_nha$site_rank <- "Regional"
+}  else if (selected_nha$site_score>457) {
+  selected_nha$site_rank <- "Global"
 }
 
 #################################################################################################################################
@@ -154,15 +158,29 @@ nha_map <- tm_shape(basetiles, unit="m") +
   tm_scale_bar(position=c("center","bottom"))
 tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep=""), units="in", width=7) 
 
+
+
 ######### Write the output document for the site ###############
 rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
-                  output_file=paste(nha_filename,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep=""),
+                  output_file=nha_filename,
                   output_dir=NHAdest1)
 
 # delete the map, after its included in the markdown
 fn <- paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep="")
 if (file.exists(fn)) #Delete file if it exists
   file.remove(fn)
+
+###############################################################################################################
+# insert the NHA data into a sqlite database
+
+nha_data <- selected_nha[c("SITE_NAME","SITE_TYPE","NHA_JOIN_ID","site_rank","site_score","BRIEF_DESC","COUNTY","Muni","USGS_QUAD","ASSOC_NHA","PROTECTED_LANDS","nha_filename")]
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+dbAppendTable(db_nha, "nha_main", nha_data)
+dbDisconnect(db_nha)
+
+
+########################
 
 #add record of creation of this site to running Excel spreadsheet of NHA site accounts
 
