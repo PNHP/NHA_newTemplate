@@ -35,7 +35,7 @@ if (!requireNamespace("tmap", quietly = TRUE)) install.packages("tmap")
 if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenStreetMap")
   require(OpenStreetMap)
 if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
-require(openxlsx)
+  require(openxlsx)
 
 # note: we need to install 64bit java: https://www.java.com/en/download/manual.jsp
 
@@ -78,6 +78,36 @@ ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse 
 
 ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
 ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
+
+# calculate the site significance rank based on the species present at the site #################################################
+source(here("scripts","nha_ThreatsRecDatabase","2_loadSpeciesWeights.r"))
+
+sigrankspecieslist <- SD_speciesTable[c("SNAME","G_RANK","S_RANK","BASIC_EO_R")]
+colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "BASIC_EO_R")] <- "EORANK"
+colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "G_RANK")] <- "GRANK"
+colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "S_RANK")] <- "SRANK"
+
+sigrankspecieslist <- merge(sigrankspecieslist, rounded_grank, by="GRANK")
+sigrankspecieslist <- merge(sigrankspecieslist, rounded_srank, by="SRANK")
+sigrankspecieslist <- merge(sigrankspecieslist, nha_EORANKweights, by="EORANK")
+#nha_gsrankMatrix["G5","S3"]
+sigrankspecieslist$rarityscore <- nha_gsrankMatrix[sigrankspecieslist$GRANK_rounded,sigrankspecieslist$SRANK_rounded]
+
+sigrankspecieslist$totalscore <- sigrankspecieslist$rarityscore * sigrankspecieslist$Weight
+
+site_score <- sum(sigrankspecieslist$totalscore)
+
+if(site_score==0){
+  site_rank <- "Local"
+} else if(site_score>0 & site_score<=152) {
+  site_rank <- "State"
+} else if(site_score>152 & site_score<=457) {
+  site_rank <- "Regional"
+}  else if (site_score>457) {
+  site_rank <- "Global"
+}
+
+#################################################################################################################################
 
 #generate URLs for each EO at site
 URL_EOs <- sapply(seq_along(ptreps_selected$EO_ID), function(x)  paste("https://bioticspa.natureserve.org/biotics/services/page/Eo/",ptreps_selected$EO_ID[x],".html", sep=""))
