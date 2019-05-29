@@ -22,8 +22,6 @@ nha_name <- "Town Hill Barren"
 
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 nha_data <- dbGetQuery(db_nha, paste("SELECT * FROM nha_main WHERE SITE_NAME = " , sQuote(nha_name), sep="") )
-#nha <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_Core"))  #  I think we can probably do this without all the ArcGIS loading
-#selected_nha <- arc.select(nha, where_clause="SITE_NAME='Carnahan Run at Stitts Run Road' AND STATUS='NP'")
 dbDisconnect(db_nha)
 
 nha_siteName <- nha_data$SITE_NAME  # CT - we should probably build the next four lines into a function.
@@ -31,6 +29,7 @@ nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
 nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
 nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
 
+# find the NHA word file template that we want to use
 NHA_file <- list.files(path=paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"), pattern=".docx$")  # --- make sure your excel file is not open.
 NHA_file
 # select the file number from the list below
