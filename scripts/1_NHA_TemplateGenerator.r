@@ -47,9 +47,7 @@ nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Town Hill Barren'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha_siteName <- selected_nha$SITE_NAME
-nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
-nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
-nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
+nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
 nha_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
 
 selected_nha$nha_filename <- nha_filename

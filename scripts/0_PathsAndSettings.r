@@ -36,6 +36,18 @@ customalbers <- "+proj=aea +lat_1=40 +lat_2=42 +lat_0=39 +lon_0=-78 +x_0=0 +y_0=
 # NHA folders on the p-drive
 NHAdest <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA"
 
+
+# function to create the folder name
+foldername <- function(x){
+  nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
+  nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
+  nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
+}
+
+
+
+
+
 # # List of all packages required for full NHA writing procedure
 # if (!requireNamespace("here", quietly = TRUE)) install.packages("here")
 # require(here)
