@@ -12,6 +12,8 @@ if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
   require(RSQLite)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
+if (!requireNamespace("plyr", quietly = TRUE)) install.packages("plyr")
+  require(plyr)
 
 # load in the paths and settings file
 source(here("scripts", "0_PathsAndSettings.r"))
@@ -44,31 +46,48 @@ text1 <- as.character(text1)
 text1 <- gsub("\r?\n|\r", " ", text1)
 rm(text)
 
-# Extract individual elements of report to add to NHA database ################################################
+###############################################################################################################
+# Extract individual elements of report, process, and add to NHA database #####################################
 
-#NHA written description information
+# NHA written description information #########################################################################
 Description <- rm_between(text1, '|DESC_B|', '|DESC_E|', fixed=TRUE, extract=TRUE)[[1]]
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+dbSendStatement(db_nha, paste("UPDATE nha_main SET Description = ", sQuote(Description), " WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
+dbDisconnect(db_nha)
+
+# Threats and Recommendations #################################################################################
+
+# Introductory paragraph for the Threats and Recommendations Section
 ThreatRecP <- rm_between(text1, '|THRRECP_B|', '|THRRECP_E|', fixed=TRUE, extract=TRUE)[[1]] 
-#I can/should write a loop that does this quickly and neatly...
-TRB1 <- rm_between(text1, '|BULL1_B|', '|BULL1_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB2 <- rm_between(text1, '|BULL2_B|', '|BULL2_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB3 <- rm_between(text1, '|BULL3_B|', '|BULL3_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB4 <- rm_between(text1, '|BULL4_B|', '|BULL4_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB5 <- rm_between(text1, '|BULL5_B|', '|BULL5_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB6 <- rm_between(text1, '|BULL6_B|', '|BULL6_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB7 <- rm_between(text1, '|BULL7_B|', '|BULL7_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB8 <- rm_between(text1, '|BULL8_B|', '|BULL8_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB9 <- rm_between(text1, '|BULL9_B|', '|BULL9_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRB10 <- rm_between(text1, '|BULL10_B|', '|BULL10_E|', fixed=TRUE, extract=TRUE)[[1]]
-TRBS <- c(TRB1, TRB2, TRB3, TRB4, TRB5, TRB6, TRB7, TRB8, TRB9, TRB10)
-rm(TRB1, TRB2, TRB3, TRB4, TRB5, TRB6, TRB7, TRB8, TRB9, TRB10)
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+dbSendStatement(db_nha, paste("UPDATE nha_main SET ThreatsAndRecomendations = ", sQuote(ThreatRecP), " WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
+dbDisconnect(db_nha)
+
+#
+
+# Extract all the threat/rec bullets into a list and convert to a dataframe
+TRB <- rm_between(text1, '|BULL_B|', '|BULL_E|', fixed=TRUE, extract=TRUE)
+TRB <- ldply(TRB)
+TRB <- as.data.frame(t(TRB))
+TRB <- cbind(nha_data$NHA_JOIN_ID,TRB)
+names(TRB) <- c("NHA_JOIN_ID","ThreatRec")
+TRB$NHA_JOIN_ID <- as.character(TRB$NHA_JOIN_ID)
+TRB$ThreatRec <- as.character(TRB$ThreatRec)
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+# delete existing threats and recs for this site if they exist
+dbExecute(db_nha, paste("DELETE FROM nha_ThreatRec WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
+# add in the new data
+dbAppendTable(db_nha, "nha_ThreatRec", TRB)
+dbDisconnect(db_nha)
+
 
 References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]]
 DateTime <- Sys.time()
 #round(DateTime, unit="day") # to pull out just date--use to select and append vs overwrite lines
 
-# Create a vector to add to the NHA database
-AddNHA <- c(nha_data$SITE_NAME, nha_data$NHA_JOIN_ID, nha_data$SITE_RANK, nha_data$Muni, nha_data$USGS_QUAD, nha_data$OLD_SITE_NAME, nha_data$ASSOC_NHA, nha_data$PROTECTED_LANDS, Description, ThreatRecP, TRBS, References, DateTime)
 
 #Pull in information on photos, for photo database table
 P1N <- rm_between(text1, '|P1N_B|', '|P1N_E|', fixed=TRUE, extract=TRUE)[[1]]
