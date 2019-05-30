@@ -40,7 +40,7 @@ if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
 # note: we need to install 64bit java: https://www.java.com/en/download/manual.jsp
 
 # load in the paths and settings file
-source(here("scripts", "0_PathsAndSettings.r"))
+source(here::here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
@@ -57,11 +57,27 @@ nha_sf <- arc.data2sf(selected_nha)
 
 ## Build the Species Table #########################
 # open the related species table and get the rows that match the NHA join id from above
-nha_relatedSpecies <- arc.open(here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
+nha_relatedSpecies <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
 selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
 
 SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R","SENSITIVE_")] # subset to columns that are needed.
+
+
+# write this table to the SQLite database
+speciesTable4db <- SD_speciesTable
+names(speciesTable4db) <- c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","GRANK","SRANK","SPROT","PBSSTATUS","LASTOBS","EORANK","SENSITIVE")
+speciesTable4db <- cbind(selected_nha$NHA_JOIN_ID, speciesTable4db)
+
+colnames(speciesTable4db)[which(names(speciesTable4db) == "selected_nha$NHA_JOIN_ID")] <- "NHA_JOIN_ID"
+speciesTable4db$NHA_JOIN_ID <- as.character(speciesTable4db$NHA_JOIN_ID)
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+# delete existing threats and recs for this site if they exist
+dbExecute(db_nha, paste("DELETE FROM nha_species WHERE NHA_JOIN_ID = ", sQuote(selected_nha$NHA_JOIN_ID), sep=""))
+# add in the new data
+dbAppendTable(db_nha, "nha_species", speciesTable4db)
+dbDisconnect(db_nha)
 
 eoid_list <- paste(toString(SD_speciesTable$EO_ID), collapse = ",")  # make a list of EOIDs to get data from
 ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse = ",")  # make a list of EOIDs to get data from
@@ -70,7 +86,7 @@ ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
 ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
 
 # calculate the site significance rank based on the species present at the site #################################################
-source(here("scripts","nha_ThreatsRecDatabase","2_loadSpeciesWeights.r"))
+source(here::here("scripts","nha_ThreatsRecDatabase","2_loadSpeciesWeights.r"))
 
 sigrankspecieslist <- SD_speciesTable[c("SNAME","G_RANK","S_RANK","BASIC_EO_R")]
 colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "BASIC_EO_R")] <- "EORANK"
@@ -110,7 +126,7 @@ Links <- paste(Sname_link, URL_EOs, sep="")
 
 #Connect to threats and recommendations SQLite database, pull in data
 databasename <- "nha_recs.sqlite" 
-databasename <- here("_data","databases",databasename)
+databasename <- here::here("_data","databases",databasename)
 
 TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
 #src_dbi(TRdb) #check structure of database
@@ -149,7 +165,7 @@ tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_foldername,"_tempmap.png",s
 
 
 ######### Write the output document for the site ###############
-rmarkdown::render(input=here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
+rmarkdown::render(input=here::here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=nha_filename,
                   output_dir=NHAdest1)
 
