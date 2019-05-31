@@ -31,44 +31,49 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
 
 # load in the paths and settings file
-source(here("0_PathsAndSettings.r"))
+source(here::here("scripts","0_PathsAndSettings.r"))
 
-# Connect to database containing NHA report content
-TRdb <- DBI::dbConnect(RSQLite::SQLite(), "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/ELCODE_TR_test.db") #connect to SQLite DB
+# Pull in the selected NHA data ################################################
+# File path for completed Word documents
+nha_name <- "Town Hill Barren"
 
-src_dbi(TRdb) #check structure of database
-tbl(TRdb, "NHAReport2")
+# query the database for the site information
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+nha_data <- dbGetQuery(db_nha, paste("SELECT * FROM nha_main WHERE SITE_NAME = " , sQuote(nha_name), sep="") )
+dbDisconnect(db_nha)
 
-# get the data
-MyQuery <- dbSendQuery(TRdb, "SELECT * FROM NHAReport2 WHERE SITE_NAME = ?")
-dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
-my_data <- dbFetch(MyQuery) #this works!
-#ensure you are pulling out the most recent date only for each site (a work-around until I figure out how to selectively overwrite records...)
-LData <- my_data %>% 
-    group_by(SITE_NAME) %>% 
-    top_n(1, DateTime)
+nha_siteName <- nha_data$SITE_NAME  
+nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
 
-#Query database to extract relevant data
-# get the photos
-tbl(TRdb, "Photos")
-MyQuery <- dbSendQuery(TRdb, "SELECT * FROM Photos WHERE SITE_NAME = ?")
-dbBind(MyQuery, list("Town Hill Barren")) #insert site names you wish to pull data on here
-my_photos <- dbFetch(MyQuery) #this works!
+# species table
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
+dbDisconnect(db_nha)
+
+# threats
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
+dbDisconnect(db_nha)
+
+nha_threats$ThreatRec <- gsub("&", "and", nha_threats$ThreatRec)
+
+# picture
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+nha_photos <- dbGetQuery(db_nha, paste("SELECT * FROM nha_photos WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
+dbDisconnect(db_nha)
+
+p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_photos$P1F, sep="/")
+
+
 
 ## Write the output document for the site ###############
-setwd(here("output"))
+setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 # knit2pdf errors for some reason...just knit then call directly
-knit2pdf(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
-#knit(here("template_Formatted_NHA_PDF.rnw"), output=paste(nha_filename, ".tex",sep=""))
-#call <- paste0("pdflatex -interaction=nonstopmode ", nha_filename , ".tex")
-#system(call)
-#system(call) # 2nd run to apply citation numbers
+knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(nha_foldername, ".tex",sep=""))
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
 if (file.exists(paste(nha_filename, ".pdf",sep=""))){
-  #setInternet2(TRUE)
-  #download.file(fileURL ,destfile,method="auto")
   for(i in 1:NROW(fn_ext)){
     fn <- paste(nha_filename, fn_ext[i],sep="")
     if (file.exists(fn)){ 
