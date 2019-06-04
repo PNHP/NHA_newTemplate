@@ -63,10 +63,34 @@ selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_re
 
 SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R","SENSITIVE_")] # subset to columns that are needed.
 
+#Function to assign images to each species in table, based on element type
+EO_ImSelect <- function(x) {
+  ifelse(SD_speciesTable$ELEMENT_TYPE=='A', "Amphibians.png", 
+         ifelse(SD_speciesTable$ELEMENT_TYPE=='B', "Birds.png", 
+                ifelse(SD_speciesTable$ELEMENT_TYPE=='C', "Communities.png",
+                       ifelse(SD_speciesTable$ELEMENT_TYPE=='F', "Fish.png",
+                              ifelse(SD_speciesTable$ELEMENT_TYPE=='IA', "Odonates.png",
+                                     ifelse(SD_speciesTable$ELEMENT_TYPE=='ID', "Odonates.png",
+                                            ifelse(SD_speciesTable$ELEMENT_TYPE=='IB', "Butterflies.png",
+                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='IM', "Moths.png",
+                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='IT', "TigerBeetles.png",
+                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='M', "Mammals.png",
+                                                  ifelse(SD_speciesTable$ELEMENT_TYPE == 'U', "Mussels.png",
+                                                  ifelse(SD_speciesTable$ELEMENT_TYPE == 'MU', "Mussels.png",
+                                          ifelse(SD_speciesTable$ELEMENT_TYPE == 'P', "Plants.png", "Snails.png")
+                                                                               ))))))))))))
+}            
+
+#add a column in NHA selected species table for the image path, and assign image
+for(i in 1:nrow(SD_speciesTable)){
+  SD_speciesTable$Images <- EO_ImSelect(SD_speciesTable[i,])
+}
+#substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request)
+SD_speciesTable <- within(SD_speciesTable, Images[SENSITIVE_=="Y"] <- "Sensitive.png") 
 
 # write this table to the SQLite database
 speciesTable4db <- SD_speciesTable
-names(speciesTable4db) <- c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","GRANK","SRANK","SPROT","PBSSTATUS","LASTOBS","EORANK","SENSITIVE")
+names(speciesTable4db) <- c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","GRANK","SRANK","SPROT","PBSSTATUS","LASTOBS","EORANK","SENSITIVE","Images")
 speciesTable4db <- cbind(selected_nha$NHA_JOIN_ID, speciesTable4db)
 
 colnames(speciesTable4db)[which(names(speciesTable4db) == "selected_nha$NHA_JOIN_ID")] <- "NHA_JOIN_ID"
