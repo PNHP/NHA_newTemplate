@@ -106,7 +106,13 @@ setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 # knit2pdf errors for some reason...just knit then call directly
 
 pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
-knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
+#knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
+knit(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex",sep=""))
+call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
+# call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
+system(call)
+#system(call) # 2nd run to apply citation numbers
+
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
