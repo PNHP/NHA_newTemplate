@@ -73,9 +73,6 @@ setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
 knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
 
-setwd(here()) # return to the main wd
-
-
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
 if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
@@ -86,5 +83,10 @@ if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
     }
   }
 }
+
+# return to the main wd
+setwd(here()) 
+
+
 
 

@@ -8,8 +8,7 @@
 %\usepackage{xcolor}
 %\usepackage{tabularx}
 \usepackage{graphicx}
-\graphicspath{ {../../z_BaseImages/EO_images/}{photos/}
-}
+\graphicspath{ {../../z_BaseImages/EO_images/}{photos/} }
 \usepackage{enumitem}
 \setlist{nolistsep}
 %\usepackage{float}
@@ -67,30 +66,27 @@
      \\ \hline                      
     \end{tabular}
  \end{table}  
-\noindent
-\textbf{\underline{Threats and Species Recommendations }}\\
-\smallskip
-\noindent
-{\Sexpr{as.character(nha_data$ThreatsAndRecomendations)}\\
-\medskip
 
+%%% Threats and Species Recommendations %%%
+\medskip
+\noindent
+\textbf{\underline{Threats and Species Recommendations}}\\
 \normalsize 
-\noindent 
-Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
+\noindent
+\Sexpr{as.character(nha_data$ThreatsAndRecomendations)}\\
+
+\noindent Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
 \begin{itemize}
 <<echo=FALSE, results='asis'>>=
 for(t in 1:nrow(nha_threats)){
   cat(paste("\\item ",as.character(nha_threats$ThreatRec[t]),sep=""))
 }
 @
-%   \item {\Sexpr{as.character(LData$TRB1)}\\   
-%   \item {\Sexpr{as.character(LData$TRB2)}\\   
-%   \item {\Sexpr{as.character(LData$TRB3)}\\  
 \end{itemize}
 
 \bigskip
 
-%  Location and Additional Infomation
+%%% Location and Additional Infomation %%% 
 \noindent\textbf{\underline{Location}}\\
 \smallskip
 \textbf{Municipalities:} \Sexpr{nha_data$Muni} \\
@@ -98,13 +94,14 @@ for(t in 1:nrow(nha_threats)){
 \textbf{Previous CNHI reference:} \Sexpr{nha_data$OLD_SITE_NAME} \\
 \textbf{Associated NHAs:} \Sexpr{nha_data$ASSOC_NHA} \\ 
 \textbf{Overlapping Protected Lands:} \Sexpr{nha_data$PROTECTED_LANDS} \\
-% % References
+
+%%% References %%% 
 % \noindent\textbf{\underline{References}}\\
 % \bigskip
 % {\Sexpr{as.character(LData$References)}\\
 % \bigskip
 
-% Recommended Citation
+%%%  Recommended Citation %%% 
 \setlength{\fboxsep}{5pt}
 \fbox{
 \begin{minipage}[t]{0.90\linewidth}%
