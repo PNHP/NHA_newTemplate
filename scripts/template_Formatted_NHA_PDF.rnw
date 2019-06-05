@@ -76,7 +76,7 @@
 
 \normalsize 
 \noindent 
-Specific threats and stresses to the elements present at this site, as well as conservation actions, include:\\
+Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
 \begin{itemize}
 <<echo=FALSE, results='asis'>>=
 for(t in 1:nrow(nha_threats)){

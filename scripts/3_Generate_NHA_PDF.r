@@ -29,6 +29,8 @@ if (!requireNamespace("DBI", quietly = TRUE)) install.packages("DBI")
   require(DBI)
 if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
+if (!requireNamespace("tinytex", quietly = TRUE)) install.packages("tinytex")
+  require(tinytex)
 
 # load in the paths and settings file
 source(here::here("scripts","0_PathsAndSettings.r"))
@@ -67,20 +69,22 @@ p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_pho
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 # knit2pdf errors for some reason...just knit then call directly
-knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(nha_foldername, ".tex",sep=""))
 
-setwd(here())
+pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
+knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
+
+setwd(here()) # return to the main wd
 
 
 # delete .txt, .log etc if pdf is created successfully.
-# fn_ext <- c(".log",".aux",".out",".tex") 
-# if (file.exists(paste(nha_filename, ".pdf",sep=""))){
-#   for(i in 1:NROW(fn_ext)){
-#     fn <- paste(nha_filename, fn_ext[i],sep="")
-#     if (file.exists(fn)){ 
-#       file.remove(fn)
-#     }
-#   }
-# }
+fn_ext <- c(".log",".aux",".out",".tex") 
+if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
+  for(i in 1:NROW(fn_ext)){
+    fn <- paste(pdf_filename, fn_ext[i],sep="")
+    if (file.exists(fn)){
+      file.remove(fn)
+    }
+  }
+}
 
 
