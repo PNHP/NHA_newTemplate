@@ -5,7 +5,6 @@
 \usepackage{fontspec}
 \setmainfont{Gill Sans MT}
 
-
 \usepackage{geometry}
 %\usepackage[table,xcdraw]{xcolor}
 %\usepackage{array}
@@ -48,7 +47,7 @@
 
 % Header
 \noindent
-\textbf{\LARGE{\Sexpr{as.character(nha_siteName)}}}\\
+\textbf{\LARGE{\Sexpr{paste(as.character(nha_siteName),"NHA",sep=" ")}}}\\
 \large Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \medskip \\
 

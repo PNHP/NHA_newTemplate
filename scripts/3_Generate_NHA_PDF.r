@@ -31,6 +31,8 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
 if (!requireNamespace("tinytex", quietly = TRUE)) install.packages("tinytex")
   require(tinytex)
+if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
+  require(stringr)
 
 # load in the paths and settings file
 source(here::here("scripts","0_PathsAndSettings.r"))
@@ -109,10 +111,8 @@ pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
 #knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
 knit(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex",sep=""))
 call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
-# call <- paste0("pdflatex -halt-on-error -interaction=nonstopmode ",model_run_name , ".tex") # this stops execution if there is an error. Not really necessary
 system(call)
 #system(call) # 2nd run to apply citation numbers
-
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
