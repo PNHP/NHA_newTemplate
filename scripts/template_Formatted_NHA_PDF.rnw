@@ -8,7 +8,8 @@
 %\usepackage{xcolor}
 %\usepackage{tabularx}
 \usepackage{graphicx}
-\graphicspath{ {photos/} }
+\graphicspath{ {EO_images/}{photos/}
+}
 %\usepackage{float}
 % \usepackage{wrapfig}
 
@@ -57,13 +58,12 @@ Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
      \hline
      <<label=speciestable, echo=FALSE, results='asis'>>=
      for(i in 1:nrow(NHAspecies)){
-       cat(paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ","&", NHAspecies$ELEMENT_TYPE[i], "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
+       cat(paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ","&", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}", "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
      }
 @
      \\ \hline                      
     \end{tabular}
- \end{table}
- 
+ \end{table}  
 \noindent
 \textbf{\underline{Threats and Species Recommendations }}\\
 \smallskip

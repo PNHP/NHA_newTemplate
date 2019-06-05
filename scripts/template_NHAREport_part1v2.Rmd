@@ -115,13 +115,13 @@ Secondly, this section will contain a bulleted list of known conservation issues
 **Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format supplied below, adding additional tagged bullets as necessary, sequentially, until you have completed all the bullets you need:**
 
 ***  
-|BULL1_B| *bullet text 1, between these tags, Please do not delete these tags!!* |BULL1_E| 
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E| 
 
-|BULL2_B| *bullet text 2, between these tags, Please do not delete these tags!!* |BULL2_E|   
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|   
 
-|BULL3_B| *bullet text 3, between these tags, Please do not delete these tags!!* |BULL3_E|  
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|  
 
-*add as many additional, sequentially numbered and tagged bullets as needed*  
+*add as many additional tagged bullets as needed, or remove unused bullets if you have fewer than 3 items*  
 
 
 ***  
@@ -199,7 +199,7 @@ Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.chara
 
 # Photos    
 
-Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site. Please delete any unused photo sections, if you have less than 3 photos:
+Do you have pictures of either the site, or the species present at the site? If so, **upload them to the NHA report folder and enter accompanying information, below, between the lines.** Add up to 3 images per site. Please upload them in order of importance, with the first image corresponding to the "cover" image for the NHA, preferably an image of the site in general, if available. Please delete any unused photo sections, if you have less than 3 photos:
 
 ***
 **Photo one**  
