@@ -8,8 +8,10 @@
 %\usepackage{xcolor}
 %\usepackage{tabularx}
 \usepackage{graphicx}
-\graphicspath{ {EO_images/}{photos/}
+\graphicspath{ {../../z_BaseImages/EO_images/}{photos/}
 }
+\usepackage{enumitem}
+\setlist{nolistsep}
 %\usepackage{float}
 % \usepackage{wrapfig}
 
@@ -32,8 +34,8 @@
 
 % Header
 \noindent
-\large{\Sexpr{as.character(nha_siteName)}}\\
-Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
+\textbf{\LARGE{\Sexpr{as.character(nha_siteName)}}}\\
+\large Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \medskip \\
 
 % % image
@@ -43,6 +45,7 @@ Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 %  \end{wrapfigure}
 
 % Site Description
+\normalsize
 \noindent
 \Sexpr{nha_data$Description}\\
 
@@ -70,7 +73,8 @@ Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \noindent
 {\Sexpr{as.character(nha_data$ThreatsAndRecomendations)}\\
 \medskip
- 
+
+\normalsize 
 \noindent 
 Specific threats and stresses to the elements present at this site, as well as conservation actions, include:\\
 \begin{itemize}
