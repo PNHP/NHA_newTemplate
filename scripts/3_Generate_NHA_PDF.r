@@ -64,22 +64,23 @@ dbDisconnect(db_nha)
 
 p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_photos$P1F, sep="/")
 
-
-
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 # knit2pdf errors for some reason...just knit then call directly
 knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(nha_foldername, ".tex",sep=""))
 
+setwd(here())
+
+
 # delete .txt, .log etc if pdf is created successfully.
-fn_ext <- c(".log",".aux",".out",".tex") 
-if (file.exists(paste(nha_filename, ".pdf",sep=""))){
-  for(i in 1:NROW(fn_ext)){
-    fn <- paste(nha_filename, fn_ext[i],sep="")
-    if (file.exists(fn)){ 
-      file.remove(fn)
-    }
-  }
-}
+# fn_ext <- c(".log",".aux",".out",".tex") 
+# if (file.exists(paste(nha_filename, ".pdf",sep=""))){
+#   for(i in 1:NROW(fn_ext)){
+#     fn <- paste(nha_filename, fn_ext[i],sep="")
+#     if (file.exists(fn)){ 
+#       file.remove(fn)
+#     }
+#   }
+# }
 
 
