@@ -19,10 +19,12 @@ if (!requireNamespace("openxlsx", quietly=TRUE)) install.packages("openxlsx")
 require(openxlsx)
 if (!requireNamespace("RSQLite", quietly=TRUE)) install.packages("RSQLite")
 require(RSQLite)
+if (!requireNamespace("stringr", quietly=TRUE)) install.packages("stringr")
+require(stringr)
 
 # Set input paths ----
 databasename <- "nha_recs.sqlite" 
-databasename <- here("_data","databases",databasename)
+databasename <- here::here("_data","databases",databasename)
 
 #Import current Element Tracking (ET) file into NHA database
 
@@ -42,6 +44,9 @@ ET <- read.xlsx(xlsxFile=paste(ET_path,ET_file, sep="/"), skipEmptyRows=FALSE, r
 
 # cleanup
 rm(n)
+
+# make a copy for the name_italicizer
+ETitalics <- ET$SCIENTIFIC.NAME
 
 # subset to tracked or watchlist species
 ET <- ET[which(ET$TRACKING.STATUS=="Y"|ET$TRACKING.STATUS=="W"),]
@@ -86,3 +91,19 @@ names(ElementThreatRecs)
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 dbWriteTable(db, "ElementThreatRecs", ElementThreatRecs[,c(2:5,8)], overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
+
+
+# Italics name layer for the tool
+ETitalics <- as.character(ETitalics$SCIENTIFIC.NAME)
+ETitalics <- unique(ETitalics)
+ETitalics <- ETitalics[!is.na(ETitalics)]
+ETitalics <- as.data.frame(ETitalics)
+# NEED to do truncate the genus to a single letter and add append the whole list
+
+db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
+dbWriteTable(db, "SNAMEitalics", ETitalics, overwrite=TRUE) # write the table to the sqlite
+dbDisconnect(db) # disconnect the db
+
+
+
+

@@ -66,6 +66,41 @@ dbDisconnect(db_nha)
 
 p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_photos$P1F, sep="/")
 
+
+## Process the species names within the site description text
+namesitalic <- NHAspecies$SNAME
+namesitalic <- namesitalic[!is.na(namesitalic)]
+vecnames <- namesitalic 
+namesitalic <- paste0("\\\\textit{",namesitalic,"}") 
+names(namesitalic) <- vecnames
+rm(vecnames)
+for(i in 1:length(namesitalic)){
+  nha_data$Description <- str_replace_all(nha_data$Description, namesitalic[i])
+}
+namesbold <- NHAspecies$SCOMNAME
+namesbold <- namesbold[!is.na(namesbold)]
+vecnames <- namesbold 
+namesbold <- paste0("\\\\textbf{",namesbold,"}") 
+names(namesbold) <- vecnames
+rm(vecnames)
+for(i in 1:length(namesbold)){
+  nha_data$Description <- str_replace_all(nha_data$Description, namesbold[i])
+}
+
+# italicize threats and stressors names
+db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
+ETitalics <- dbGetQuery(db, paste("SELECT * FROM SNAMEitalics") )
+dbDisconnect(db) # disconnect the db
+ETitalics <- ETitalics$ETitalics
+vecnames <- ETitalics 
+ETitalics <- paste0("\\\\textit{",ETitalics,"}") 
+names(ETitalics) <- vecnames
+rm(vecnames)
+for(j in 1:nrow(nha_threats)){
+  nha_threats$ThreatRec[j] <- str_replace_all(nha_threats$ThreatRec[j], ETitalics)
+}
+
+##############################################################################################################
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 # knit2pdf errors for some reason...just knit then call directly

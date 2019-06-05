@@ -10,10 +10,10 @@ if (!requireNamespace("arcgisbinding", quietly = TRUE)) install.packages("arcgis
   require(arcgisbinding)
 if (!requireNamespace("RSQLite", quietly = TRUE)) install.packages("RSQLite")
   require(RSQLite)
-if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
-  require(dbplyr)
 if (!requireNamespace("plyr", quietly = TRUE)) install.packages("plyr")
   require(plyr)
+if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
+  require(dbplyr)
 if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
   require(stringr)
 
@@ -54,15 +54,17 @@ rm(text)
 # NHA written description information #########################################################################
 Description <- rm_between(text1, '|DESC_B|', '|DESC_E|', fixed=TRUE, extract=TRUE)[[1]]
 # bold and italic species names
-db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-  NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
-dbDisconnect(db_nha)
+# db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+#   NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
+# dbDisconnect(db_nha)
+
 # namesbold <- paste0("//textbf{",NHAspecies$SCOMNAME,"}")
 # names(namesbold) <- NHAspecies$SCOMNAME
 # Description1 <- str_replace_all(Description, namesbold)
-namesitalic <- paste0("//textit{",NHAspecies$SNAME,"}")  
-names(namesitalic) <- NHAspecies$SNAME
-Description <- str_replace_all(Description, namesitalic)
+# 
+# namesitalic <- paste0("/textit{",NHAspecies$SNAME,"}")  
+# names(namesitalic) <- NHAspecies$SNAME
+# Description <- str_replace_all(Description, namesitalic)
 
 
 # add the above to the database
