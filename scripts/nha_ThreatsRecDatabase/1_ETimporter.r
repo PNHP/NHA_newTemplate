@@ -92,11 +92,16 @@ db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 dbWriteTable(db, "ElementThreatRecs", ElementThreatRecs[,c(2:5,8)], overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
 
-
+#################################################################################################################
 # Italics name layer for the tool
-ETitalics <- as.character(ETitalics$SCIENTIFIC.NAME)
 ETitalics <- unique(ETitalics)
 ETitalics <- ETitalics[!is.na(ETitalics)]
+
+genusnames <- word(ETitalics, 1)
+genusnames <- as.character(genusnames)
+genusnames <- unique(genusnames)
+ETitalics <- c(ETitalics, genusnames)
+
 ETitalics <- as.data.frame(ETitalics)
 # NEED to do truncate the genus to a single letter and add append the whole list
 
