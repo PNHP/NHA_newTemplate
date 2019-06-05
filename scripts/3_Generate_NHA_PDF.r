@@ -120,7 +120,7 @@ if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
 }
 
 # return to the main wd
-setwd(here()) 
+setwd(here::here()) 
 
 
 
