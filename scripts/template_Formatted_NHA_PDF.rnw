@@ -83,14 +83,22 @@
      \hline
      <<label=speciestable, echo=FALSE, results='asis'>>=
      NHAspecies$SNAME_or <- NHAspecies$SNAME
-     NHAspecies$SNAME[NHAspecies$SENSITIVE =="Y"] = paste(NHAspecies$SNAME,"\\tnote{3} ") 
-     for(i in 1:nrow(NHAspecies)){
+     SSct <- length(NHAspecies$SENSITIVE[NHAspecies$SENSITIVE == "Y"])
+     SSOCid <- letters[1:SSct]
+     NHAspecies$SNAME[NHAspecies$SENSITIVE =="Y"] = paste("Sensitive Species of Concern",SSOCid,"\\tnote{3} ") 
        # make the SCOMNAME (SNAME) strings here, eliminating the SNAME if they are the same
        if(is.na(NHAspecies$SCOMNAME[i])){
          NHAspecies$SCOMNAME[i] <- "No Name Available"
        } 
        if(NHAspecies$SCOMNAME[i]==NHAspecies$SNAME[i]){
          speciesstring <- paste0(NHAspecies$SCOMNAME[i])
+       } else {
+         speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
+       }
+     #remove double names for sensitive species of concern
+     for(i in 1:nrow(NHAspecies)){ 
+     if(NHAspecies$SENSITIVE[i]=="Y"){
+         speciesstring <- paste0(NHAspecies$SNAME[i])
        } else {
          speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
        }
