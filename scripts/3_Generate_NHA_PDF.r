@@ -31,6 +31,8 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
   require(dbplyr)
 if (!requireNamespace("tinytex", quietly = TRUE)) install.packages("tinytex")
   require(tinytex)
+if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
+require(stringr)
 
 # load in the paths and settings file
 source(here::here("scripts","0_PathsAndSettings.r"))
