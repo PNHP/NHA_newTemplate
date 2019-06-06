@@ -2,6 +2,9 @@
 \documentclass{article}
 \UseRawInputEncoding
 %\usepackage[utf8]{inputenc}
+\usepackage{fontspec}
+\setmainfont{Gill Sans MT}
+
 \usepackage{geometry}
 %\usepackage[table,xcdraw]{xcolor}
 %\usepackage{array}
@@ -12,6 +15,9 @@
 \usepackage{enumitem}
 \setlist{nolistsep}
 \usepackage{threeparttable}
+\usepackage{lastpage}
+\usepackage{fancyhdr} %for headers,footers
+
 %\usepackage{float}
 % \usepackage{wrapfig}
 \usepackage{hyperref}
@@ -23,7 +29,7 @@
 }
 
 \geometry{letterpaper, top=0.45in, bottom=0.75in, left=0.75in, right=0.75in}
-%\pagestyle{fancy} \fancyhf{} \renewcommand\headrulewidth{0pt} %strip default header/footer stuff
+\pagestyle{fancy} \fancyhf{} \renewcommand\headrulewidth{0pt} %strip default header/footer stuff
 
 \setlength\intextsep{0pt}
 
@@ -32,13 +38,25 @@
 % \hyphenpenalty=10000
 % \hbadness=10000
 
+%add footers
+\lfoot{
+ \small   %small font. The double slashes is newline in fancyhdr
+ \Sexpr{paste(as.character(nha_siteName), "Natural Heritage Area", sep=" ")} 
+}
+\rfoot{
+ \small  
+ page \thepage  of \pageref{LastPage}
+}
+
+
+
 \begin{document}
 %\raggedright
 \catcode`\_=11
 
 % Header
 \noindent
-\textbf{\LARGE{\Sexpr{as.character(nha_siteName)}}}\\
+\textbf{\LARGE{\Sexpr{paste(as.character(nha_siteName),"NHA",sep=" ")}}}\\
 \large Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \medskip \\
 
@@ -61,13 +79,30 @@
    \centering
     \begin{tabular}{p{3in}cccccc}
      \hline
-     Species or Natural Community Name &  & Global\tnote{1} & State\tnote{1} & PA Legal Status\tnote{1} & LastSeen	& Quality\tnote{2} \\
+     \textbf{Species or Natural Community Name} &  & \textbf{Global} & \textbf{State} & \textbf{PA Legal Status} & \textbf{LastSeen}	& \textbf{Quality} \\
      \hline
      <<label=speciestable, echo=FALSE, results='asis'>>=
      NHAspecies$SNAME_or <- NHAspecies$SNAME
      NHAspecies$SNAME[NHAspecies$SENSITIVE =="Y"] = paste(NHAspecies$SNAME,"\\tnote{3} ") 
      for(i in 1:nrow(NHAspecies)){
-       cat(paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ", "&", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}", "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
+       # make the SCOMNAME (SNAME) strings here, eliminating the SNAME if they are the same
+       if(is.na(NHAspecies$SCOMNAME[i])){
+         NHAspecies$SCOMNAME[i] <- "No Name Available"
+       } 
+       if(NHAspecies$SCOMNAME[i]==NHAspecies$SNAME[i]){
+         speciesstring <- paste0(NHAspecies$SCOMNAME[i])
+       } else {
+         speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
+       }
+       # replace the state status 'NA'
+       if(is.na(NHAspecies$SPROT[i])){
+         NHAspecies$SPROT[i] <- "--"
+       } 
+       if(is.na(NHAspecies$PBSSTATUS[i])){
+         NHAspecies$PBSSTATUS[i] <- "--"
+       }      
+       # conctenate and make the table row
+       cat(paste0(speciesstring, " &", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}", "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
      }
      NHAspecies$SNAME <- NHAspecies$SNAME_or
 @

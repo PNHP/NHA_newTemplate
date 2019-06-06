@@ -97,10 +97,22 @@ dbDisconnect(db) # disconnect the db
 ETitalics <- unique(ETitalics)
 ETitalics <- ETitalics[!is.na(ETitalics)]
 
+# abrecivate the genus names
+shortname <- do.call("rbind", strsplit(sub(" ", ";", ETitalics), ";")) #Replace the first space with a semicolon (using sub and not gsub), strsplit on the semicolon and then rbind it into a 2 column matrix:
+shortname <- as.data.frame.matrix(shortname)
+names(shortname) <- c("genus","theRest")
+shortname$gabbr <- substr(shortname$genus,1,1)
+shortname$shortname <- paste0(shortname$gabbr,". ",genusnames$theRest)
+
+shortname <- shortname$shortname
+
+# genus names
 genusnames <- word(ETitalics, 1)
 genusnames <- as.character(genusnames)
 genusnames <- unique(genusnames)
-ETitalics <- c(ETitalics, genusnames)
+
+# merge it all together
+ETitalics <- c(ETitalics, genusnames, shortname)
 
 ETitalics <- as.data.frame(ETitalics)
 # NEED to do truncate the genus to a single letter and add append the whole list
