@@ -88,6 +88,24 @@ for(i in 1:nrow(SD_speciesTable)){
 #substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request)
 SD_speciesTable <- within(SD_speciesTable, Images[SENSITIVE_=="Y"] <- "Sensitive.png") 
 
+#subset out freshwater sponges
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IZSPN")] <- "Sponges.png") 
+#subset out beetles
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IICOL")] <- "TigerBeetles.png") 
+#subset out caddisflies + stoneflies (?)
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IITRI")] <- "Caddisflies.png")
+#subset out stoneflies/mayflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIEPH")] <- "OtherInverts.png")
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIPLE")] <- "OtherInverts.png")
+#subset out craneflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIDIP")] <- "Craneflies.png")
+#subset out liverworts
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NBHEP")] <- "Liverworts.png")
+#subset out mosses
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NLT")] <- "Mosses.png")
+#subset out earwig scorpionflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIME")] <- "earwigscorpionfly.png")
+
 # write this table to the SQLite database
 speciesTable4db <- SD_speciesTable
 names(speciesTable4db) <- c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","GRANK","SRANK","SPROT","PBSSTATUS","LASTOBS","EORANK","SENSITIVE","Images")
