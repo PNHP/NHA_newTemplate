@@ -22,7 +22,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 
 # Pull in the selected NHA data ################################################
 # File path for completed Word documents
-nha_name <- "Town Hill Barren"
+nha_name <- "Hogback Barrens"
 
 # query the database for the site information
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
