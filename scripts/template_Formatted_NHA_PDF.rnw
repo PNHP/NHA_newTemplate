@@ -126,7 +126,17 @@
        # concatenate and make the table row
        cat(paste0(speciesstring, " &", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}", "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
      }
+     
+     
+     # add coded sensitive species into "decoder" database table
+     NHAspecies$SNAME[NHAspecies$SENSITIVE =="Y"] = paste("Sensitive Species of Concern",SSOCid)
+     NHAspecies$SCODE <- NHAspecies$SNAME
      NHAspecies$SNAME <- NHAspecies$SNAME_or
+     SensT <- NHAspecies[NHAspecies$SENSITIVE=="Y",]
+     SensT <- SensT[c("NHA_JOIN_ID","EO_ID","ELCODE","SCODE","SNAME","SCOMNAME")]
+     db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+    dbAppendTable(db_nha, "nha_sensitivespeciesdecoder", SensT) # add in the new data
+    dbDisconnect(db_nha) #disconnect
 @
      \\ \hline                      
     \end{tabular}
