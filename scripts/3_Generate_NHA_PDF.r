@@ -152,7 +152,7 @@ vecnames <- ETitalics
 ETitalics <- paste0("\\\\textit{",ETitalics,"}") 
 names(ETitalics) <- vecnames
 rm(vecnames)
-
+#italicize the stuff
 for(j in 1:length(ETitalics)){
   nha_data$Description <- str_replace_all(nha_data$Description, ETitalics[j])
 }
@@ -163,17 +163,10 @@ for(j in 1:nrow(nha_threats)){
 ##############################################################################################################
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
-# knit2pdf errors for some reason...just knit then call directly
-
 pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
-#knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
-knit(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex",sep=""))
-call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
-system(call)
-system(call) # 2nd run to apply citation numbers
 
-# delete .txt, .log etc if pdf is created successfully.
-deletepdfjunk(pdf_filename)
+makePDF(rnw_template, pdf_filename) # user created function
+deletepdfjunk(pdf_filename) # user created function # delete .txt, .log etc if pdf is created successfully.
 
 # return to the main wd
 setwd(here::here()) 

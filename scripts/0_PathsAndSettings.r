@@ -36,6 +36,9 @@ customalbers <- "+proj=aea +lat_1=40 +lat_2=42 +lat_0=39 +lon_0=-78 +x_0=0 +y_0=
 # NHA folders on the p-drive
 NHAdest <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA"
 
+# RNW file to use
+rnw_template <- "template_Formatted_NHA_PDF.rnw"
+
 # function to create the folder name
 foldername <- function(x){
   nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
@@ -43,6 +46,14 @@ foldername <- function(x){
   nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
 }
 
+# function to generate the pdf
+#knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
+makePDF <- function(rnw_template, pdf_filename) {
+  knit(here::here("scripts", rnw_template), output=paste(pdf_filename, ".tex",sep=""))
+  call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
+  system(call)
+  system(call) # 2nd run to apply citation numbers
+}
 
 # function to delete .txt, .log etc if pdf is created successfully.
 deletepdfjunk <- function(pdf_filename){
