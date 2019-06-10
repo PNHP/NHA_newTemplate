@@ -49,6 +49,14 @@ dbDisconnect(db_nha)
 nha_siteName <- nha_data$SITE_NAME  
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
 
+# replace NA in 'Location' data with specific text 
+if(is.na(nha_data$PROTECTED_LANDS)){
+  nha_data$PROTECTED_LANDS <- "This site is not documented as overlapping with any Federal, state, or locally protected land or conservation easements."
+} else {
+  nha_data$PROTECTED_LANDS <- nha_data$PROTECTED_LANDS
+}
+
+
 # species table
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
