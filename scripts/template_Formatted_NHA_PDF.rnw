@@ -79,7 +79,7 @@
    \centering
     \begin{tabular}{p{3in}cccccc}
      \hline
-     \textbf{Species or Natural Community Name} &  & \textbf{Global} & \textbf{State} & \textbf{PA Legal Status} & \textbf{LastSeen}	& \textbf{Quality} \\
+     \textbf{Species or Natural Community Name} &  & \textbf{Global}\tnote{1} & \textbf{State}\tnote{1} & \textbf{PA Legal Status} & \textbf{LastSeen}	& \textbf{Quality}\tnote{2} \\
      \hline
      <<label=speciestable, echo=FALSE, results='asis'>>=
      #Sort species table first taxonomically, and then alphabetically by SName
@@ -124,7 +124,7 @@
          NHAspecies$SRANK[i] <- "--"
        }
        # concatenate and make the table row
-       cat(paste0(speciesstring, " &", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}", "&", NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i], "&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i], "&", NHAspecies$EORANK[i],"\\\\" ) )
+       cat(paste0(speciesstring, " &", "\\includegraphics[width=0.15in]{",NHAspecies$Images[i],"}","&",NHAspecies$GRANK[i], "&", NHAspecies$SRANK[i],"&", paste0(NHAspecies$SPROT[i]," (",NHAspecies$PBSSTATUS[i],")"), "&", NHAspecies$LASTOBS[i],"&", NHAspecies$EORANK[i],"\\\\") )
      }
      
      
