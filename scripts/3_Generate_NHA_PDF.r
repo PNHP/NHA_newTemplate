@@ -65,21 +65,43 @@ NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN
 dbDisconnect(db_nha)
 
 # create paragraph about species ranks
-rounded_srank <- read.csv(here("_data","databases","sourcefiles","rounded_srank.csv"), stringsAsFactors=FALSE)
-rounded_grank <- read.csv(here("_data","databases","sourcefiles","rounded_grank.csv"), stringsAsFactors=FALSE)
+rounded_srank <- read.csv(here::here("_data","databases","sourcefiles","rounded_srank.csv"), stringsAsFactors=FALSE)
+rounded_grank <- read.csv(here::here("_data","databases","sourcefiles","rounded_grank.csv"), stringsAsFactors=FALSE)
 
 granklist <- merge(rounded_grank, NHAspecies[c("SNAME","SCOMNAME","GRANK","SENSITIVE")], by="GRANK")
 # secure species
-spCount_GSecure <- nrow(granklist[which((granklist$GRANK_rounded=="G4"|granklist$GRANK_rounded=="G5"|granklist$GRANK_rounded=="GNR")&granklist$SENSITIVE!="Y"),])
+a <- nrow(granklist[which((granklist$GRANK_rounded=="G4"|granklist$GRANK_rounded=="G5"|granklist$GRANK_rounded=="GNR")&granklist$SENSITIVE!="Y"),])
+if (length(a)==0){
+  spCount_GSecure <- 0
+} else {
+  spCount_GSecure <- a
+}
+rm(a)
 spExample_GSecure <- sample(granklist[which(granklist$SENSITIVE!="Y"),]$SNAME, 1, replace=FALSE, prob=NULL) 
+
 # vulnerable species
-spCount_GVulnerable <- nrow(granklist[which((granklist$GRANK_rounded=="G3")&granklist$SENSITIVE!="Y"),])
+a <- nrow(granklist[which((granklist$GRANK_rounded=="G3")&granklist$SENSITIVE!="Y"),])
+if (length(a)==0){
+  spCount_GVulnerable <- 0
+} else {
+  spCount_GVulnerable <- a
+}
+rm(a)
 spExample_GVulnerable <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & granklist$GRANK_rounded=="G3"),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
+
 # imperiled species
-spCount_GImperiled <- nrow(granklist[which((granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")&granklist$SENSITIVE!="Y"),])
+a <- nrow(granklist[which((granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")&granklist$SENSITIVE!="Y"),])
+if (length(a)==0){
+  spCount_GImperiled <- 0
+} else {
+  spCount_GImperiled <- a
+}
+rm(a)
+
+
 spExample_GImperiled <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & (granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
 
-rm(granklist)
+rm(granklist, rounded_srank, rounded_grank)
 
 # threats
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
@@ -87,6 +109,11 @@ nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_J
 dbDisconnect(db_nha)
 
 nha_threats$ThreatRec <- gsub("&", "and", nha_threats$ThreatRec)
+
+# References
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+nha_References <- dbGetQuery(db_nha, paste("SELECT * FROM nha_References WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
+dbDisconnect(db_nha)
 
 # picture
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database

@@ -99,6 +99,22 @@ dbDisconnect(db_nha)
 
 # References ###################################################################################################
 References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]]
+References <- ldply(References)
+References <- as.data.frame(t(References))
+References <- cbind(nha_data$NHA_JOIN_ID,References)
+names(References) <- c("NHA_JOIN_ID","Reference")
+References$NHA_JOIN_ID <- as.character(References$NHA_JOIN_ID)
+References$Reference <- as.character(References$Reference)
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+# delete existing threats and recs for this site if they exist
+dbExecute(db_nha, paste("DELETE FROM nha_References WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
+# add in the new data
+dbAppendTable(db_nha, "nha_References", References)
+dbDisconnect(db_nha)
+
+
+
 DateTime <- Sys.time()
 #round(DateTime, unit="day") # to pull out just date--use to select and append vs overwrite lines
 

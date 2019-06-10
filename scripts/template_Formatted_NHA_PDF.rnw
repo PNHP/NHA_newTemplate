@@ -203,10 +203,10 @@ for(t in 1:nrow(nha_threats)){
 \textbf{Overlapping Protected Lands:} \Sexpr{nha_data$PROTECTED_LANDS} \\
 
 %%% References %%% 
-% \noindent\textbf{\underline{References}}\\
-% \bigskip
-% {\Sexpr{as.character(LData$References)}\\
-% \bigskip
+\noindent\textbf{\underline{References}}\\
+ \medskip
+ {\Sexpr{as.character(nha_References$Reference)}\\
+ \bigskip
 
 %%%  Recommended Citation %%% 
 \setlength{\fboxsep}{5pt}
