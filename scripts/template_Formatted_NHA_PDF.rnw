@@ -75,7 +75,7 @@ This site has been rated as \Sexpr{nha_data$SITE_RANK} significant due
 % calculates what text to say
 <<label=sigparagraph, echo=FALSE, results='asis'>>=
 if(nha_data$SITE_RANK=="Global" & spCount_GImperiled>0) {
-  cat(paste0("the presence of a globally rare species, such as ", spExample_GImperiled$SCOMNAME, " (\\textit{",spExample_GImperiled$SNAME,"})",", present within the NHA."))
+  cat(paste0("the presence of a globally rare species, such as ", spExample_GImperiled$SCOMNAME, " (\\textit{",spExample_GImperiled$SNAME,"})",", present within the NHA."," Sites designated as Globally Significant are of highest conservation concern within the commonwealth."))
 } else if(nha_data$SITE_RANK=="Regional" & spCount_GVulnerable>0) {
   cat(paste0("at least ",words(spCount_GVulnerable)," globally vulnerable (G3) species, such as ", spExample_GVulnerable$SCOMNAME, " (\\textit{",spExample_GVulnerable$SNAME,"})",", present within the NHA."))
 }  else if(nha_data$SITE_RANK=="State" & spCount_GSecure>0) {
