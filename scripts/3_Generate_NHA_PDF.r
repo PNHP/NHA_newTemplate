@@ -33,6 +33,8 @@ if (!requireNamespace("tinytex", quietly = TRUE)) install.packages("tinytex")
   require(tinytex)
 if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
   require(stringr)
+if (!requireNamespace("english", quietly = TRUE)) install.packages("english")
+  require(english)
 
 # load in the paths and settings file
 source(here::here("scripts","0_PathsAndSettings.r"))
@@ -61,6 +63,23 @@ if(is.na(nha_data$PROTECTED_LANDS)){
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
+
+# create paragraph about species ranks
+rounded_srank <- read.csv(here("_data","databases","sourcefiles","rounded_srank.csv"), stringsAsFactors=FALSE)
+rounded_grank <- read.csv(here("_data","databases","sourcefiles","rounded_grank.csv"), stringsAsFactors=FALSE)
+
+granklist <- merge(rounded_grank, NHAspecies[c("SNAME","SCOMNAME","GRANK","SENSITIVE")], by="GRANK")
+# secure species
+spCount_GSecure <- nrow(granklist[which((granklist$GRANK_rounded=="G4"|granklist$GRANK_rounded=="G5"|granklist$GRANK_rounded=="GNR")&granklist$SENSITIVE!="Y"),])
+spExample_GSecure <- sample(granklist[which(granklist$SENSITIVE!="Y"),]$SNAME, 1, replace=FALSE, prob=NULL) 
+# vulnerable species
+spCount_GVulnerable <- nrow(granklist[which((granklist$GRANK_rounded=="G3")&granklist$SENSITIVE!="Y"),])
+spExample_GVulnerable <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & granklist$GRANK_rounded=="G3"),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
+# imperiled species
+spCount_GImperiled <- nrow(granklist[which((granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")&granklist$SENSITIVE!="Y"),])
+spExample_GImperiled <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & (granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
+
+rm(granklist)
 
 # threats
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
@@ -110,7 +129,6 @@ rm(vecnames)
 for(j in 1:length(ETitalics)){
   nha_data$Description <- str_replace_all(nha_data$Description, ETitalics[j])
 }
-
 for(j in 1:nrow(nha_threats)){
   nha_threats$ThreatRec[j] <- str_replace_all(nha_threats$ThreatRec[j], ETitalics)
 }
