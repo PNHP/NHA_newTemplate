@@ -42,3 +42,17 @@ foldername <- function(x){
   nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
   nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
 }
+
+
+# function to delete .txt, .log etc if pdf is created successfully.
+deletepdfjunk <- function(pdf_filename){
+  fn_ext <- c(".log",".aux",".out",".tex") 
+  if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
+    for(i in 1:NROW(fn_ext)){
+      fn <- paste(pdf_filename, fn_ext[i],sep="")
+      if (file.exists(fn)){
+        file.remove(fn)
+      }
+    }
+  }
+}

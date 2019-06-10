@@ -120,15 +120,7 @@ system(call)
 system(call) # 2nd run to apply citation numbers
 
 # delete .txt, .log etc if pdf is created successfully.
-fn_ext <- c(".log",".aux",".out",".tex") 
-if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
-  for(i in 1:NROW(fn_ext)){
-    fn <- paste(pdf_filename, fn_ext[i],sep="")
-    if (file.exists(fn)){
-      file.remove(fn)
-    }
-  }
-}
+deletepdfjunk(pdf_filename)
 
 # return to the main wd
 setwd(here::here()) 
