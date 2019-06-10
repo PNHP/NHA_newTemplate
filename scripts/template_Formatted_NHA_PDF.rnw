@@ -106,7 +106,7 @@
        # remove double names for sensitive species of concern
        if(NHAspecies$SENSITIVE[i]=="Y"){
          j <- j + 1 # add one the sensitive species id
-         speciesstring <- paste("Sensitive Species of Concern",SSOCid[j],"\\tnote{3} ") 
+         speciesstring <- paste("Sensitive Species of Concern ",SSOCid[j],"\\tnote{3}", sep="") 
        } else {
          speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
        }
