@@ -89,7 +89,7 @@ for(i in 1:length(namesbold)){
   nha_data$Description <- str_replace_all(nha_data$Description, namesbold[i])
 }
 
-# italicize threats and stressors names
+# italicize other species names in threats and stressors and brief description
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 ETitalics <- dbGetQuery(db, paste("SELECT * FROM SNAMEitalics") )
 dbDisconnect(db) # disconnect the db
@@ -98,6 +98,11 @@ vecnames <- ETitalics
 ETitalics <- paste0("\\\\textit{",ETitalics,"}") 
 names(ETitalics) <- vecnames
 rm(vecnames)
+
+for(j in 1:length(ETitalics)){
+  nha_data$Description <- str_replace_all(nha_data$Description, ETitalics[j])
+}
+
 for(j in 1:nrow(nha_threats)){
   nha_threats$ThreatRec[j] <- str_replace_all(nha_threats$ThreatRec[j], ETitalics)
 }
