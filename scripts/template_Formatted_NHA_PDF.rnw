@@ -12,7 +12,7 @@
 %\usepackage{tabularx}
 \usepackage{wrapfig}
 \usepackage{graphicx}
-\graphicspath{ {../../z_BaseImages/EO_images/}{photos/} }
+\graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage{enumitem}
 \setlist{nolistsep}
 \usepackage{threeparttable}
@@ -109,7 +109,7 @@
        # remove double names for sensitive species of concern
        if(NHAspecies$SENSITIVE[i]=="Y"){
          j <- j + 1 # add one the sensitive species id
-         speciesstring <- paste("Sensitive Species of Concern",SSOCid[j],"\\tnote{3} ") 
+         speciesstring <- paste("Sensitive Species of Concern ",SSOCid[j],"\\tnote{3}", sep="") 
        } else {
          speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
        }
@@ -154,8 +154,8 @@
      \\ \hline                      
     \end{tabular}
     \begin{tablenotes}
-    \item [1] See the PNHP website (\url{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
-    \item [2] See NatureServe website (\url{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
+    \item [1] See the PNHP website (\href{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
+    \item [2] See NatureServe website (\href{http://www.natureserve.org/explorer/eorankguide.htm}{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
     <<SensitiveFNote3, echo=FALSE, results='asis'>>=
      SensitiveFNote <- ifelse(any(NHAspecies$SENSITIVE=="Y"), "\\item [3] This species is not named by request of the jurisdictional agency responsible for its protection.\\end{tablenotes}","\\end{tablenotes}") 
      @
@@ -199,11 +199,24 @@ for(t in 1:nrow(nha_threats)){
 
 %%%  Recommended Citation %%% 
 \setlength{\fboxsep}{5pt}
+% \fbox{
+% \begin{minipage}[t]{0.90\linewidth}%
+% Please cite this Natural Heritage Area as: \\
+% Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_siteName)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
+% \end{minipage}
+% }
+
 \fbox{
-\begin{minipage}[t]{0.90\linewidth}%
+\begin{minipage}[c]{0.2\linewidth}
+\includegraphics[width=1.0\linewidth]{PNHP_New_Logo_cmpact}%png logo file at repository root
+\end{minipage}%
+\begin{minipage}[c]{0.75\linewidth}
 Please cite this Natural Heritage Area as: \\
 Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_siteName)} NHA. Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
 \end{minipage}
 }
+
+
+
 
 \end{document}
