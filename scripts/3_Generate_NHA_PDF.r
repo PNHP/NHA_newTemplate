@@ -117,7 +117,7 @@ pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
 knit(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex",sep=""))
 call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
 system(call)
-#system(call) # 2nd run to apply citation numbers
+system(call) # 2nd run to apply citation numbers
 
 # delete .txt, .log etc if pdf is created successfully.
 fn_ext <- c(".log",".aux",".out",".tex") 
