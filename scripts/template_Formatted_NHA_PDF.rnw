@@ -151,8 +151,8 @@
      \\ \hline                      
     \end{tabular}
     \begin{tablenotes}
-    \item [1] See the PNHP website (\url{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
-    \item [2] See NatureServe website (\url{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
+    \item [1] See the PNHP website (\href{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
+    \item [2] See NatureServe website (\href{http://www.natureserve.org/explorer/eorankguide.htm}{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
     <<SensitiveFNote3, echo=FALSE, results='asis'>>=
      SensitiveFNote <- ifelse(any(NHAspecies$SENSITIVE=="Y"), "\\item [3] This species is not named by request of the jurisdictional agency responsible for its protection.\\end{tablenotes}","\\end{tablenotes}") 
      @
