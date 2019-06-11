@@ -41,7 +41,7 @@ rnw_template <- "template_Formatted_NHA_PDF.rnw"
 
 # function to create the folder name
 foldername <- function(x){
-  nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
+  nha_foldername <- gsub(" ", "", nha_data$SITE_NAME, fixed=TRUE)
   nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
   nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
 }
