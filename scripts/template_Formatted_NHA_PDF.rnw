@@ -11,6 +11,7 @@
 \usepackage{xcolor}
 %\usepackage{tabularx}
 \usepackage{wrapfig}
+\usepackage{caption}
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage{enumitem}
@@ -57,9 +58,12 @@
 % % image
 \begin{wrapfigure}[13]{R}{0.5\textwidth}
   \centering
-  \includegraphics[0.49\textwidth]{\Sexpr{nha_photos$P1F}}
-  \captionsetup{labelformat=empty}
-  \caption{\Sexpr{paste(nha_photos$P1C)}}
+  \includegraphics[0.5\textwidth]{\Sexpr{nha_photos$P1F}}
+  \captionsetup{labelformat=empty, justification=centerlast}
+  <<label=captionfunction, echo=FALSE, results='asis'>>=
+  capfun <- as.character(paste(nha_photos$P1C, "\\textcolor{gray}{", nha_photos$P1N,"}", sep=" "))
+  @
+  \caption{\Sexpr{capfun}}
 \end{wrapfigure}
 
 
