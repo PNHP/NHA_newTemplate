@@ -62,11 +62,11 @@
 \medskip \\
 
 % % image
-\begin{wrapfigure}{R}{0.5\textwidth}
-\centering
-\includegraphics[width=0.49\textwidth]{\Sexpr{nha_photos$P1F}}
-\captionsetup{labelformat=empty}
-\caption{\Sexpr{paste(nha_photos$P1C)} }
+\begin{wrapfigure}[13]{R}{0.5\textwidth}
+  \centering
+  \includegraphics[0.49\textwidth]{\Sexpr{nha_photos$P1F}}
+  \captionsetup{labelformat=empty}
+  \caption{\Sexpr{paste(nha_photos$P1C)}}
 \end{wrapfigure}
 
 % Site Description
