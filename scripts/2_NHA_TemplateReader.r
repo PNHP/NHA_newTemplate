@@ -17,6 +17,8 @@ if (!requireNamespace("dbplyr", quietly = TRUE)) install.packages("dbplyr")
 if (!requireNamespace("stringr", quietly = TRUE)) install.packages("stringr")
   require(stringr)
 
+
+
 # load in the paths and settings file
 source(here::here("scripts", "0_PathsAndSettings.r"))
 
@@ -100,7 +102,7 @@ dbDisconnect(db_nha)
 # References ###################################################################################################
 References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]]
 References <- ldply(References)
-References <- as.data.frame(t(References))
+References <- as.data.frame(References)
 References <- cbind(nha_data$NHA_JOIN_ID,References)
 names(References) <- c("NHA_JOIN_ID","Reference")
 References$NHA_JOIN_ID <- as.character(References$NHA_JOIN_ID)

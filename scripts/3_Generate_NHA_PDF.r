@@ -61,7 +61,7 @@ if(is.na(nha_data$PROTECTED_LANDS)){
 
 # species table
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
+  NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
 
 # create paragraph about species ranks
@@ -97,17 +97,14 @@ if (length(a)==0){
   spCount_GImperiled <- a
 }
 rm(a)
-
-
 spExample_GImperiled <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & (granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
 
 rm(granklist, rounded_srank, rounded_grank)
 
 # threats
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
+  nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
-
 nha_threats$ThreatRec <- gsub("&", "and", nha_threats$ThreatRec)
 
 # References
@@ -124,7 +121,7 @@ p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_pho
 
 
 ## Process the species names within the site description text
-namesitalic <- NHAspecies$SNAME
+namesitalic <- NHAspecies[which(NHAspecies$ELEMENT_TYPE!="C"),]$SNAME
 namesitalic <- namesitalic[!is.na(namesitalic)]
 vecnames <- namesitalic 
 namesitalic <- paste0("\\\\textit{",namesitalic,"}") 
@@ -133,6 +130,7 @@ rm(vecnames)
 for(i in 1:length(namesitalic)){
   nha_data$Description <- str_replace_all(nha_data$Description, namesitalic[i])
 }
+
 namesbold <- NHAspecies$SCOMNAME
 namesbold <- namesbold[!is.na(namesbold)]
 vecnames <- namesbold 
@@ -164,13 +162,6 @@ for(j in 1:nrow(nha_threats)){
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
 pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
-
 makePDF(rnw_template, pdf_filename) # user created function
 deletepdfjunk(pdf_filename) # user created function # delete .txt, .log etc if pdf is created successfully.
-
-# return to the main wd
-setwd(here::here()) 
-
-
-
-
+setwd(here::here()) # return to the main wd 
