@@ -48,8 +48,7 @@ db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 nha_data <- dbGetQuery(db_nha, paste("SELECT * FROM nha_main WHERE SITE_NAME = " , sQuote(nha_name), sep="") )
 dbDisconnect(db_nha)
 
-nha_siteName <- nha_data$SITE_NAME  
-nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
+nha_foldername <- foldername(nha_data$SITE_NAME ) # this now uses a user-defined function
 
 # replace NA in 'Location' data with specific text 
 if(is.na(nha_data$PROTECTED_LANDS)){
@@ -71,31 +70,16 @@ rounded_grank <- read.csv(here::here("_data","databases","sourcefiles","rounded_
 granklist <- merge(rounded_grank, NHAspecies[c("SNAME","SCOMNAME","GRANK","SENSITIVE")], by="GRANK")
 # secure species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G4"|granklist$GRANK_rounded=="G5"|granklist$GRANK_rounded=="GNR")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GSecure <- 0
-} else {
-  spCount_GSecure <- a
-}
-rm(a)
+spCount_GSecure <- ifelse(length(a)==0, 0, a)
 spExample_GSecure <- sample(granklist[which(granklist$SENSITIVE!="Y"),]$SNAME, 1, replace=FALSE, prob=NULL) 
-
 # vulnerable species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G3")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GVulnerable <- 0
-} else {
-  spCount_GVulnerable <- a
-}
+spCount_GVulnerable <- ifelse(length(a)==0, 0, a)
 rm(a)
 spExample_GVulnerable <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & granklist$GRANK_rounded=="G3"),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
-
 # imperiled species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GImperiled <- 0
-} else {
-  spCount_GImperiled <- a
-}
+spCount_GImperiled <- ifelse(length(a)==0, 0, a)
 rm(a)
 spExample_GImperiled <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & (granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
 

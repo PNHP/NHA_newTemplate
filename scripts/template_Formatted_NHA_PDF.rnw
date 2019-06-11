@@ -8,8 +8,7 @@
 \usepackage{geometry}
 %\usepackage[table,xcdraw]{xcolor}
 %\usepackage{array}
-%\usepackage{xcolor}
-%\usepackage{tabularx}
+\usepackage{xcolor}
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage{enumitem}
@@ -33,22 +32,15 @@
 
 \setlength\intextsep{0pt}
 
-% \tolerance=1
-% \emergencystretch=\maxdimen
-% \hyphenpenalty=10000
-% \hbadness=10000
-
 %add footers
 \lfoot{
  \small   %small font. The double slashes is newline in fancyhdr
- \Sexpr{paste(as.character(nha_siteName), "Natural Heritage Area", sep=" ")} 
+ \textcolor{gray}{\Sexpr{paste(as.character(nha_data$SITE_NAME), "Natural Heritage Area", sep=" ")} }
 }
 \rfoot{
  \small  
- page \thepage  of \pageref{LastPage}
+ \textcolor{gray}{page \thepage of \pageref*{LastPage}}
 }
-
-
 
 \begin{document}
 %\raggedright
@@ -56,15 +48,9 @@
 
 % Header
 \noindent
-\textbf{\LARGE{\Sexpr{paste(as.character(nha_siteName),"NHA",sep=" ")}}}\\
+\textbf{\LARGE{\Sexpr{paste(as.character(nha_data$SITE_NAME),"NHA",sep=" ")}}}\\
 \large Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \medskip \\
-
-% % image
-% \begin{wrapfigure}{r}{0.5\textwidth}
-%    \includegraphics[width=0.49\textwidth]{Stonecrop_shale.png} % need to not hard code the file
-%  \caption{ \Sexpr{paste(nha_photos$P1C)} }
-%  \end{wrapfigure}
 
 % Site Description
 \normalsize
@@ -84,8 +70,6 @@ if(nha_data$SITE_RANK=="Global" & spCount_GImperiled>0) {
 @
 The species tracked by PNHP present at this NHA include:
 \medskip
-
-
 % Species Table
 \begin{table}[h]
  \begin{threeparttable}[b]
@@ -101,18 +85,14 @@ The species tracked by PNHP present at this NHA include:
      NHAspecies$OrderVec <- NHAspecies$ELEMENT_TYPE
      NHAspecies <- within(NHAspecies, OrderVec[SENSITIVE =="Y"] <- "S")    
      NHAspecies$OrderVec <- factor(NHAspecies$OrderVec, levels=TaxOrder)
-     #NHAspecies$OrderVec <- as.character(NHAspecies$OrderVec)
      NHAspecies <- NHAspecies[order(NHAspecies$OrderVec, NHAspecies$SNAME),]
      
      #Recode Sensitive Species names
      NHAspecies$SNAME_or <- NHAspecies$SNAME
      SSct <- length(NHAspecies$SENSITIVE[NHAspecies$SENSITIVE == "Y"])
      SSOCid <- toupper(letters[1:SSct])
-     #NHAspecies$SNAME[NHAspecies$SENSITIVE =="Y"] = paste("Sensitive Species of Concern",SSOCid,"\\tnote{3} ") 
-     j=0
+     j=0 #set the indexing for the sensitive species 
      for(i in 1:nrow(NHAspecies)){ 
-       # set up sensitive species id vector
-       
        # replace common name if blank
        if(is.na(NHAspecies$SCOMNAME[i])){
          NHAspecies$SCOMNAME[i] <- "No Name Available"
@@ -127,9 +107,7 @@ The species tracked by PNHP present at this NHA include:
        # make the SCOMNAME (SNAME) strings here, eliminating the SNAME if they are the same
        if(NHAspecies$SCOMNAME[i]==NHAspecies$SNAME[i] & NHAspecies$SENSITIVE[i]!="Y"){
          speciesstring <- paste0(NHAspecies$SCOMNAME[i])
-       } #else {
-         #speciesstring <- paste0(NHAspecies$SCOMNAME[i]," (\\textit{",NHAspecies$SNAME[i],"}) ")
-       #}
+       } 
        # replace the state status 'NA'
        if(is.na(NHAspecies$SPROT[i])){
          NHAspecies$SPROT[i] <- "--"
@@ -162,26 +140,27 @@ The species tracked by PNHP present at this NHA include:
      dbAppendTable(db_nha, "nha_sensitivespeciesdecoder", SensT) # add in the new data
     dbDisconnect(db_nha) #disconnect
 @
-     \\ \hline                      
+    \hline                      
     \end{tabular}
     \begin{tablenotes}
+    \begin{footnotesize}
     \item [1] See the PNHP website (\href{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
     \item [2] See NatureServe website (\href{http://www.natureserve.org/explorer/eorankguide.htm}{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
     <<SensitiveFNote3, echo=FALSE, results='asis'>>=
      SensitiveFNote <- ifelse(any(NHAspecies$SENSITIVE=="Y"), "\\item [3] This species is not named by request of the jurisdictional agency responsible for its protection.\\end{tablenotes}","\\end{tablenotes}") 
      @
     \Sexpr{paste(SensitiveFNote)}
+    \end{footnotesize}
   \end{threeparttable}  
  \end{table}  
 
 %%% Threats and Species Recommendations %%%
 \medskip
 \noindent
-\textbf{\underline{Threats and Species Recommendations}}\\
+\textbf{\underline{Threats and Species Recommendations}}\\\\
 \normalsize 
 \noindent
-\Sexpr{as.character(nha_data$ThreatsAndRecomendations)}\\
-\noindent Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
+\Sexpr{as.character(nha_data$ThreatsAndRecomendations)} Specific threats and stresses to the elements present at this site, as well as conservation actions, include:
 \begin{itemize}
 <<echo=FALSE, results='asis'>>=
 for(t in 1:nrow(nha_threats)){
@@ -193,7 +172,8 @@ for(t in 1:nrow(nha_threats)){
 \bigskip
 
 %%% Location and Additional Infomation %%% 
-\noindent\textbf{\underline{Location}}\\
+\pagebreak[1]
+\noindent\textbf{\underline{Location}}\\\\
 \smallskip
 \textbf{Municipalities:} \Sexpr{nha_data$Muni} \\
 \textbf{USGS quads:} \Sexpr{nha_data$USGS_QUAD} \\
@@ -202,7 +182,7 @@ for(t in 1:nrow(nha_threats)){
 \textbf{Overlapping Protected Lands:} \Sexpr{nha_data$PROTECTED_LANDS} \\
 
 %%% References %%% 
-\noindent\textbf{\underline{References}}\\
+\noindent\textbf{\underline{References}}\\\\
 \begin{itemize}
 <<echo=FALSE, results='asis'>>=
 for(r in 1:nrow(nha_References)){
@@ -212,7 +192,8 @@ for(r in 1:nrow(nha_References)){
 \end{itemize}
 
 \bigskip
-
+% the next line moves the recommended citation to the bottom of the page
+\vspace*{\fill}
 %%%  Recommended Citation %%% 
 \setlength{\fboxsep}{5pt}
 \fbox{
@@ -221,11 +202,11 @@ for(r in 1:nrow(nha_References)){
 \end{minipage}%
 \begin{minipage}[c]{0.75\linewidth}
 \textit{Please cite this Natural Heritage Area as:} \\
-Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_siteName)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
+Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_data$SITE_NAME)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
 \end{minipage}
 }
 
-
-
+\newpage
+insert map here
 
 \end{document}
