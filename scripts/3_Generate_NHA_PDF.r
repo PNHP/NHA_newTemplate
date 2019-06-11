@@ -48,8 +48,7 @@ db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 nha_data <- dbGetQuery(db_nha, paste("SELECT * FROM nha_main WHERE SITE_NAME = " , sQuote(nha_name), sep="") )
 dbDisconnect(db_nha)
 
-nha_siteName <- nha_data$SITE_NAME  
-nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
+nha_foldername <- foldername(nha_data$SITE_NAME ) # this now uses a user-defined function
 
 # replace NA in 'Location' data with specific text 
 if(is.na(nha_data$PROTECTED_LANDS)){
@@ -61,7 +60,7 @@ if(is.na(nha_data$PROTECTED_LANDS)){
 
 # species table
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
+  NHAspecies <- dbGetQuery(db_nha, paste("SELECT * from nha_species WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
 
 # create paragraph about species ranks
@@ -71,43 +70,25 @@ rounded_grank <- read.csv(here::here("_data","databases","sourcefiles","rounded_
 granklist <- merge(rounded_grank, NHAspecies[c("SNAME","SCOMNAME","GRANK","SENSITIVE")], by="GRANK")
 # secure species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G4"|granklist$GRANK_rounded=="G5"|granklist$GRANK_rounded=="GNR")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GSecure <- 0
-} else {
-  spCount_GSecure <- a
-}
-rm(a)
+spCount_GSecure <- ifelse(length(a)==0, 0, a)
 spExample_GSecure <- sample(granklist[which(granklist$SENSITIVE!="Y"),]$SNAME, 1, replace=FALSE, prob=NULL) 
-
 # vulnerable species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G3")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GVulnerable <- 0
-} else {
-  spCount_GVulnerable <- a
-}
+spCount_GVulnerable <- ifelse(length(a)==0, 0, a)
 rm(a)
 spExample_GVulnerable <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & granklist$GRANK_rounded=="G3"),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
-
 # imperiled species
 a <- nrow(granklist[which((granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")&granklist$SENSITIVE!="Y"),])
-if (length(a)==0){
-  spCount_GImperiled <- 0
-} else {
-  spCount_GImperiled <- a
-}
+spCount_GImperiled <- ifelse(length(a)==0, 0, a)
 rm(a)
-
-
 spExample_GImperiled <- sample_n(granklist[which(granklist$SENSITIVE!="Y" & (granklist$GRANK_rounded=="G2"|granklist$GRANK_rounded=="G1")),c("SNAME","SCOMNAME")], 1, replace=FALSE, prob=NULL) 
 
 rm(granklist, rounded_srank, rounded_grank)
 
 # threats
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
+  nha_threats <- dbGetQuery(db_nha, paste("SELECT * FROM nha_ThreatRec WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
-
 nha_threats$ThreatRec <- gsub("&", "and", nha_threats$ThreatRec)
 
 # References
@@ -124,7 +105,7 @@ p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_pho
 
 
 ## Process the species names within the site description text
-namesitalic <- NHAspecies$SNAME
+namesitalic <- NHAspecies[which(NHAspecies$ELEMENT_TYPE!="C"),]$SNAME
 namesitalic <- namesitalic[!is.na(namesitalic)]
 vecnames <- namesitalic 
 namesitalic <- paste0("\\\\textit{",namesitalic,"}") 
@@ -133,6 +114,7 @@ rm(vecnames)
 for(i in 1:length(namesitalic)){
   nha_data$Description <- str_replace_all(nha_data$Description, namesitalic[i])
 }
+
 namesbold <- NHAspecies$SCOMNAME
 namesbold <- namesbold[!is.na(namesbold)]
 vecnames <- namesbold 
@@ -152,7 +134,7 @@ vecnames <- ETitalics
 ETitalics <- paste0("\\\\textit{",ETitalics,"}") 
 names(ETitalics) <- vecnames
 rm(vecnames)
-
+#italicize the stuff
 for(j in 1:length(ETitalics)){
   nha_data$Description <- str_replace_all(nha_data$Description, ETitalics[j])
 }
@@ -163,21 +145,7 @@ for(j in 1:nrow(nha_threats)){
 ##############################################################################################################
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
-# knit2pdf errors for some reason...just knit then call directly
-
 pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
-#knit2pdf(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex", sep=""))
-knit(here::here("scripts","template_Formatted_NHA_PDF.rnw"), output=paste(pdf_filename, ".tex",sep=""))
-call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
-system(call)
-system(call) # 2nd run to apply citation numbers
-
-# delete .txt, .log etc if pdf is created successfully.
-deletepdfjunk(pdf_filename)
-
-# return to the main wd
-setwd(here::here()) 
-
-
-
-
+makePDF(rnw_template, pdf_filename) # user created function
+deletepdfjunk(pdf_filename) # user created function # delete .txt, .log etc if pdf is created successfully.
+setwd(here::here()) # return to the main wd 
