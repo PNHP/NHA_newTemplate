@@ -46,7 +46,7 @@ ET <- read.xlsx(xlsxFile=paste(ET_path,ET_file, sep="/"), skipEmptyRows=FALSE, r
 rm(n)
 
 # make a copy for the name_italicizer
-ETitalics <- ET$SCIENTIFIC.NAME
+ETitalics <- ET[which(substr(ET$ELCODE, 1, 1)!="C"&substr(ET$ELCODE, 1, 1)!="G"&substr(ET$ELCODE, 1, 1)!="H"),]$SCIENTIFIC.NAME
 
 # subset to tracked or watchlist species
 ET <- ET[which(ET$TRACKING.STATUS=="Y"|ET$TRACKING.STATUS=="W"),]
@@ -102,7 +102,7 @@ shortname <- do.call("rbind", strsplit(sub(" ", ";", ETitalics), ";")) #Replace 
 shortname <- as.data.frame.matrix(shortname)
 names(shortname) <- c("genus","theRest")
 shortname$gabbr <- substr(shortname$genus,1,1)
-shortname$shortname <- paste0(shortname$gabbr,". ",genusnames$theRest)
+shortname$shortname <- paste0(shortname$gabbr,". ",shortname$theRest)
 
 shortname <- shortname$shortname
 
