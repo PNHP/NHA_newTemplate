@@ -12,6 +12,7 @@
 %\usepackage{tabularx}
 \usepackage{wrapfig}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage{enumitem}
@@ -42,7 +43,7 @@
 }
 \rfoot{
  \small  
- \textcolor{gray}{page \thepage of \pageref*{LastPage}}
+ \textcolor{gray}{page \thepage of \pageref*{ LastPage}}
 }
 
 \begin{document}
@@ -205,6 +206,22 @@ for(r in 1:nrow(nha_References)){
 }
 @
 \end{itemize}
+
+
+<<Conditional23Pics, echo=F, results='asis'>>=
+## embed images 2 and 3, if they exist in photo database
+
+capfun2 <- as.character(paste(nha_photos$P2C, "\\textcolor{gray}{", nha_photos$P2N,"}", sep=" "))
+capfun3 <- as.character(paste(nha_photos$P3C, "\\textcolor{gray}{", nha_photos$P3N,"}", sep=" "))
+
+if(is.na(nha_photos$P2F) & is.na(nha_photos$P3F)) {
+  paste0("\\")
+} else if(is.na(nha_photos$P3F) & !is.na(nha_photos$P2F)){
+    paste0("\\begin{figure}[h!] \\centering \\includegraphics[width=\\linewidth]{\\Sexpr{nha_photos$P2F}} \\captionsetup{labelformat=empty, justification=centerlast} \\caption{\\Sexpr{capfun2}} \\end{figure}")
+  } else {
+    paste0("\\begin{figure}[h!] \\centering \\begin{subfigure}[b]{0.4\\linewidth} \\centering \\includegraphics[width=\\linewidth]{\\Sexpr{nha_photos$P2F}} \\subcaption{\\Sexpr{capfun2}}\\label{fig:1a} \\end{subfigure} \\hspace{1 cm} \\begin{subfigure}[b]{0.4\\linewidth} \\centering \\includegraphics[width=\\linewidth]{\\Sexpr{nha_photos$P3F}} \\subcaption{\\Sexpr{capfun3}}\\label{fig:1b} \\end{subfigure} \\end{figure}")
+    }
+@
 
 \bigskip
 % the next line moves the recommended citation to the bottom of the page
