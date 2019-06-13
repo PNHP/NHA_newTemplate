@@ -43,7 +43,7 @@
 }
 \rfoot{
  \small  
- \textcolor{gray}{page \thepage of \pageref*{ LastPage}}
+ \textcolor{gray}{page  \thepage   of  \pageref*{LastPage}}
 }
 
 \begin{document}
@@ -196,7 +196,8 @@ for(t in 1:nrow(nha_threats)){
 \textbf{Previous CNHI reference:} \Sexpr{nha_data$OLD_SITE_NAME} \\
 \textbf{Associated NHAs:} \Sexpr{nha_data$ASSOC_NHA} \\ 
 \textbf{Overlapping Protected Lands:} \Sexpr{nha_data$PROTECTED_LANDS} \\
-\textbf{Acreage:} \Sexpr{signif(selected_nha$Acres, digits=0)} acres \\
+\textbf{Acreage:} \Sexpr{signif(selected_nha$Acres, digits=0)} acres \\  
+  
 %%% References %%% 
 \noindent\textbf{\underline{References}}\\\\
 \begin{itemize}
