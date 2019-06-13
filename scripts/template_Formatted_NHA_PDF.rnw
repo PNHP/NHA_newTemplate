@@ -3,8 +3,11 @@
 \usepackage[utf8]{inputenc} %\UseRawInputEncoding
 \usepackage{fontspec}
 \setmainfont{Gill Sans MT}
+\usepackage[margin=10pt,font=small]{caption}
 \usepackage{geometry}
 \usepackage{xcolor}
+%\usepackage{tabularx}
+\usepackage{wrapfig}
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage[style=authoryear,hyperref=false]{biblatex}
@@ -48,6 +51,15 @@
 \textbf{\LARGE{\Sexpr{paste(as.character(nha_data$SITE_NAME),"NHA",sep=" ")}}}\\
 \large Significance Rank: {\Sexpr{nha_data$SITE_RANK}}\
 \medskip \\
+
+% % image
+\begin{wrapfigure}{R}{0.5\textwidth}
+\centering
+\includegraphics[width=0.49\textwidth]{\Sexpr{nha_photos$P1F}}
+\captionsetup{labelformat=empty}
+\caption{\Sexpr{paste(nha_photos$P1C)} }
+\end{wrapfigure}
+
 
 % Site Description
 \normalsize
@@ -197,8 +209,10 @@ for(t in 1:nrow(nha_threats)){
 \includegraphics[width=1.0\linewidth]{PNHP_New_Logo_cmpact}%png logo file at repository root
 \end{minipage}%
 \begin{minipage}[c]{0.75\linewidth}
+
 \textit{Please cite this Natural Heritage Area as:} \\
 Pennsylvania Natural Heritage Program. \Sexpr{format(Sys.Date(), "%Y")}. \Sexpr{as.character(nha_data$SITE_NAME)} NHA. . Created on \Sexpr{format(Sys.Date(), "%d %b %Y")}. . Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx 
+
 \end{minipage}
 }
 
