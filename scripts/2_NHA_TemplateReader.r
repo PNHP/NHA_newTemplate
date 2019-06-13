@@ -38,7 +38,7 @@ nha_foldername <- foldername(nha_siteName) # this now uses a user-defined functi
 NHA_file <- list.files(path=paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"), pattern=".docx$")  # --- make sure your excel file is not open.
 NHA_file
 # select the file number from the list below
-n <- 1
+n <- 2
 NHA_file <- NHA_file[n]
 # create the path to the whole file!
 NHAdest1 <- paste(NHAdest,"DraftSiteAccounts", nha_foldername, NHA_file, sep="/")
@@ -103,9 +103,15 @@ dbDisconnect(db_nha)
 References <- rm_between(text1, '|REF_B|', '|REF_E|', fixed=TRUE, extract=TRUE)[[1]]
 References <- ldply(References)
 References <- as.data.frame(References)
-References <- cbind(nha_data$NHA_JOIN_ID,References)
-names(References) <- c("NHA_JOIN_ID","Reference")
+
+RefCodes <- rm_between(text1, '|REFCODE_B|', '|REFCODE_E|', fixed=TRUE, extract=TRUE)[[1]]
+RefCodes <- ldply(RefCodes)
+RefCodes <- as.data.frame(RefCodes)
+
+References <- cbind(nha_data$NHA_JOIN_ID, RefCodes, References)
+names(References) <- c("NHA_JOIN_ID","RefCode","Reference")
 References$NHA_JOIN_ID <- as.character(References$NHA_JOIN_ID)
+References$RefCode <- as.character(References$RefCode)
 References$Reference <- as.character(References$Reference)
 
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database

@@ -52,12 +52,13 @@ makePDF <- function(rnw_template, pdf_filename) {
   knit(here::here("scripts", rnw_template), output=paste(pdf_filename, ".tex",sep=""))
   call <- paste0("xelatex -interaction=nonstopmode ",pdf_filename , ".tex")
   system(call)
+  system(paste0("biber ",pdf_filename))
   system(call) # 2nd run to apply citation numbers
 }
 
 # function to delete .txt, .log etc if pdf is created successfully.
 deletepdfjunk <- function(pdf_filename){
-  fn_ext <- c(".log",".aux",".out",".tex") 
+  fn_ext <- c(".aux",".out",".run.xml",".bcf",".blg") #".tex", ".log",,".bbl"
   if (file.exists(paste(pdf_filename, ".pdf",sep=""))){
     for(i in 1:NROW(fn_ext)){
       fn <- paste(pdf_filename, fn_ext[i],sep="")
