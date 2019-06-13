@@ -95,6 +95,9 @@ nha_threats$ThreatRec <- gsub("&", "and", nha_threats$ThreatRec)
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
 nha_References <- dbGetQuery(db_nha, paste("SELECT * FROM nha_References WHERE NHA_JOIN_ID = " , sQuote(nha_data$NHA_JOIN_ID), sep="") )
 dbDisconnect(db_nha)
+# fileConn<-file(paste(NHAdest, "DraftSiteAccounts", nha_foldername, "ref.bib", sep="/"))
+# writeLines(c(nha_References$Reference), fileConn)
+# close(fileConn)
 
 # picture
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
@@ -125,6 +128,8 @@ for(i in 1:length(namesbold)){
   nha_data$Description <- str_replace_all(nha_data$Description, namesbold[i])
 }
 
+
+
 # italicize other species names in threats and stressors and brief description
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 ETitalics <- dbGetQuery(db, paste("SELECT * FROM SNAMEitalics") )
@@ -141,6 +146,17 @@ for(j in 1:length(ETitalics)){
 for(j in 1:nrow(nha_threats)){
   nha_threats$ThreatRec[j] <- str_replace_all(nha_threats$ThreatRec[j], ETitalics)
 }
+
+
+# #citations
+# namescitatations <- "fike_terrestrial_1993"
+# vecnames <- namescitatations
+# namescitatations <- paste0("\\\\parencite{",namescitatations,"}") 
+# names(namescitatations) <- vecnames
+# rm(vecnames)
+# for(i in 1:length(namescitatations)){
+#   nha_data$Description <- str_replace_all(nha_data$Description, namescitatations[i])
+# }
 
 ##############################################################################################################
 ## Write the output document for the site ###############

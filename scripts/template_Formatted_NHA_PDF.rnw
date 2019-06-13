@@ -1,13 +1,10 @@
 %This knitr document is called by the knit2pdf ....
 \documentclass{article}
-\UseRawInputEncoding
-%\usepackage[utf8]{inputenc}
+\usepackage[utf8]{inputenc} %\UseRawInputEncoding
 \usepackage{fontspec}
 \setmainfont{Gill Sans MT}
 \usepackage[margin=10pt,font=small]{caption}
 \usepackage{geometry}
-%\usepackage[table,xcdraw]{xcolor}
-%\usepackage{array}
 \usepackage{xcolor}
 %\usepackage{tabularx}
 \usepackage{wrapfig}
@@ -15,12 +12,13 @@
 \usepackage{subcaption}
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
+\usepackage[style=authoryear,hyperref=false]{biblatex}
+\addbibresource{../../citations/PNHP_refs.bib}
 \usepackage{enumitem}
 \setlist{nolistsep}
 \usepackage{threeparttable}
 \usepackage{lastpage}
 \usepackage{fancyhdr} %for headers,footers
-
 %\usepackage{float}
 % \usepackage{wrapfig}
 \usepackage{hyperref}
@@ -158,8 +156,8 @@ The species tracked by PNHP present at this NHA include:
 @
     \hline                      
     \end{tabular}
-    \begin{tablenotes}
     \begin{footnotesize}
+    \begin{tablenotes}
     \item [1] See the PNHP website (\href{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}{http://www.naturalheritage.state.pa.us/RankStatusDef.aspx}) for an explanation of PNHP ranks and legal status. A legal status in parentheses is a status change recommended by the Pennsylvania Biological Survey.
     \item [2] See NatureServe website (\href{http://www.natureserve.org/explorer/eorankguide.htm}{http://www.natureserve.org/explorer/eorankguide.htm}) for an explanation of quality ranks.
     <<SensitiveFNote3, echo=FALSE, results='asis'>>=
@@ -180,7 +178,7 @@ The species tracked by PNHP present at this NHA include:
 \begin{itemize}
 <<echo=FALSE, results='asis'>>=
 for(t in 1:nrow(nha_threats)){
-  cat(paste("\\item ",as.character(nha_threats$ThreatRec[t]),sep=""))
+  cat(paste0("\\item ",as.character(nha_threats$ThreatRec[t])))
 }
 @
 \end{itemize}
@@ -198,14 +196,13 @@ for(t in 1:nrow(nha_threats)){
 \textbf{Overlapping Protected Lands:} \Sexpr{nha_data$PROTECTED_LANDS} \\
 
 %%% References %%% 
-\noindent\textbf{\underline{References}}\\\\
-\begin{itemize}
-<<echo=FALSE, results='asis'>>=
-for(r in 1:nrow(nha_References)){
-  cat(paste("\\item ",as.character(nha_References$Reference[r]),sep=""))
-}
-@
-\end{itemize}
+\noindent\textbf{\underline{References}}\\
+%\bibliographystyle{plain}
+\printbibliography
+
+
+
+
 
 
 <<Conditional23Pics, echo=F, results='asis'>>=
