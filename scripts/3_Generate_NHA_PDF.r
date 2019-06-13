@@ -148,20 +148,20 @@ for(j in 1:nrow(nha_threats)){
 }
 
 
-#citations
-namescitatations <- "fike_terrestrial_1993"
-vecnames <- namescitatations
-namescitatations <- paste0("\\\\parencite{",namescitatations,"}") 
-names(namescitatations) <- vecnames
-rm(vecnames)
-for(i in 1:length(namescitatations)){
-  nha_data$Description <- str_replace_all(nha_data$Description, namescitatations[i])
-}
+# #citations
+# namescitatations <- "fike_terrestrial_1993"
+# vecnames <- namescitatations
+# namescitatations <- paste0("\\\\parencite{",namescitatations,"}") 
+# names(namescitatations) <- vecnames
+# rm(vecnames)
+# for(i in 1:length(namescitatations)){
+#   nha_data$Description <- str_replace_all(nha_data$Description, namescitatations[i])
+# }
 
 ##############################################################################################################
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))
-#pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
+pdf_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.time() ),sep="")
 makePDF(rnw_template, pdf_filename) # user created function
 deletepdfjunk(pdf_filename) # user created function # delete .txt, .log etc if pdf is created successfully.
 setwd(here::here()) # return to the main wd 
