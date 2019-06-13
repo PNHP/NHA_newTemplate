@@ -8,7 +8,7 @@
 \usepackage{graphicx}
 \graphicspath{ {../../z_BaseImages/}{../../z_BaseImages/EO_images/}{photos/} }
 \usepackage[style=authoryear,hyperref=false]{biblatex}
-\addbibresource{PNHP_refs.bib}
+\addbibresource{../../citations/PNHP_refs.bib}
 \usepackage{enumitem}
 \setlist{nolistsep}
 \usepackage{threeparttable}
