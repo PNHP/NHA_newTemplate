@@ -55,7 +55,10 @@ Please check the species table below for accuracy. Make a note of any issues, us
 ```{r species table, echo=FALSE}
 ## Build the Species Table #########################
 
-SD_speciesTablePrint <- SD_speciesTable[,-c(1:2)]
+SD_speciesTablePrint <- SD_speciesTable[,-which(names(SD_speciesTable) %in% c("ELCODE","EO_ID","ELSubID"))]
+SD_speciesTablePrint$SNAME <- paste(SD_speciesTablePrint$SCOMNAME," (",SD_speciesTablePrint$SNAME,")", sep="")
+SD_speciesTablePrint$SCOMNAME <- NULL
+
 row.names(SD_speciesTablePrint) <- SD_speciesTable$SNAME
 
 #Print species table for site
@@ -142,7 +145,7 @@ Included below is species-specific information on general conservation threats a
 
 #join tables and report threats and recs for selected species
 Sel_TR <- ELCODE_TR %>% 
-  select(SNAME, CategoryName, Threats, Recs) %>% collect()
+  select(ELSubID, CategoryName, Threats, Recs) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
 
