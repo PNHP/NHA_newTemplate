@@ -197,7 +197,7 @@ Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.chara
 
 # Map  
 
-![Core habitat boundaries of `r selected_nha$SITE_NAME` NHA](`r paste(NHAdest1, "/", nha_filename,"_tempmap.png",sep="")`)
+![Core habitat boundaries of `r selected_nha$SITE_NAME` NHA](`r paste(NHAdest1, "/", nha_foldername,"_tempmap.png",sep="")`)
 
 
 # Photos    
