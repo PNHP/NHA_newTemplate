@@ -13,8 +13,8 @@
 #
 #-------------------------------------------------------------------------------
 
-if (!requireNamespace("here", quietly=TRUE)) install.packages("here")
-require(here)
+# if (!requireNamespace("here", quietly=TRUE)) install.packages("here")
+# require(here)
 if (!requireNamespace("openxlsx", quietly=TRUE)) install.packages("openxlsx")
 require(openxlsx)
 if (!requireNamespace("RSQLite", quietly=TRUE)) install.packages("RSQLite")
@@ -22,9 +22,12 @@ require(RSQLite)
 if (!requireNamespace("stringr", quietly=TRUE)) install.packages("stringr")
 require(stringr)
 
+# database path
+databasepath <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/z_Databases"
+
 # Set input paths ----
 databasename <- "nha_recs.sqlite" 
-databasename <- here::here("_data","databases",databasename)
+databasename <- paste(databasepath,databasename,sep="/")
 
 #Import current Element Tracking (ET) file into NHA database
 
@@ -71,11 +74,12 @@ db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
 dbWriteTable(db, "ET", ET, overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
 
+###############################################################################################
 #Import current threats/recs tables
+ThreatRecPath <- paste(databasepath,"temp",sep="/")#   "P://Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/Copy of ELCODE_threatsrecs_database_allEOs_elsubid.xlsx"  
 
-ThreatRecPath <- "P://Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/NHA_Tool/Copy of ELCODE_threatsrecs_database_allEOs_elsubid.xlsx"  
-
-ThreatRecTable <- read.xlsx(xlsxFile=ThreatRecPath, sheet="ThreatRecTable", skipEmptyRows=FALSE, rowNames=FALSE)
+ThreatRecTable <- read.csv(paste(ThreatRecPath,"ThreatRecTable.csv",sep="/"), stringsAsFactors=FALSE)   
+ThreatRecTable <- ThreatRecTable[which(ThreatRecTable$Status=="Active"),]
 
 #write to database
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
@@ -84,12 +88,12 @@ dbDisconnect(db) # disconnect the db
 
 #Import 
 
-ElementThreatRecs <- read.xlsx(xlsxFile=ThreatRecPath, sheet="ALLEOs", skipEmptyRows=FALSE, rowNames=FALSE)
-names(ElementThreatRecs)
+ElementThreatRecs <- read.csv(paste(ThreatRecPath,"rel_ThreatRecs.csv",sep="/"), stringsAsFactors=FALSE)
+ElementThreatRecs$ID <- NULL
 
 #write to database
 db <- dbConnect(SQLite(), dbname=databasename) # connect to the database
-dbWriteTable(db, "ElementThreatRecs", ElementThreatRecs[,c(2:5,8)], overwrite=TRUE) # write the table to the sqlite
+dbWriteTable(db, "ElementThreatRecs", ElementThreatRecs, overwrite=TRUE) # write the table to the sqlite
 dbDisconnect(db) # disconnect the db
 
 #################################################################################################################

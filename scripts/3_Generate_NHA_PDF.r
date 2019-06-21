@@ -148,16 +148,6 @@ for(j in 1:nrow(nha_threats)){
 }
 
 
-# #citations
-# namescitatations <- "fike_terrestrial_1993"
-# vecnames <- namescitatations
-# namescitatations <- paste0("\\\\parencite{",namescitatations,"}") 
-# names(namescitatations) <- vecnames
-# rm(vecnames)
-# for(i in 1:length(namescitatations)){
-#   nha_data$Description <- str_replace_all(nha_data$Description, namescitatations[i])
-# }
-
 ##############################################################################################################
 ## Write the output document for the site ###############
 setwd(paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"))

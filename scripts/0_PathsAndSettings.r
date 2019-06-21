@@ -28,7 +28,16 @@ NHA_path <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlann
 nha_databasename <- here::here("_data","databases","NaturalHeritageAreas.sqlite")
 
 # threat recc database name
-databasename <- here::here("_data","databases","nha_recs.sqlite")
+TRdatabasepath <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/z_Databases"
+TRdatabasename <- "nha_recs.sqlite" 
+TRdatabasename <- paste(TRdatabasepath,TRdatabasename,sep="/")
+
+# Second, set up an ODBC connection. You only need to do this once, if you continue to connect to the db with the same name
+# 1. click magnifier (search) in lower left, type "ODBC" in search window, open "ODBC Data Sources (64 bit)"
+# 2. On User DSN tab, choose "Add", then choose "Microsoft Access Driver (.mdb,.accdb)", click on Finish
+# 3. In Data Source Name, put "mobi_spp_tracking", then select the DB using the Select button. "OK", then close out.
+#https://support.microsoft.com/en-us/help/2721825/unable-to-create-dsn-for-microsoft-office-system-driver-on-64-bit-vers
+
 
 # custom albers projection
 customalbers <- "+proj=aea +lat_1=40 +lat_2=42 +lat_0=39 +lon_0=-78 +x_0=0 +y_0=0 +ellps=GRS80 +units=m +no_defs "
@@ -39,9 +48,14 @@ NHAdest <- "P:/Conservation Programs/Natural Heritage Program/ConservationPlanni
 # RNW file to use
 rnw_template <- "template_Formatted_NHA_PDF.rnw"
 
+
+###########################################################################################################################
+# FUNCTIONS
+###########################################################################################################################
+
 # function to create the folder name
 foldername <- function(x){
-  nha_foldername <- gsub(" ", "", nha_data$SITE_NAME, fixed=TRUE)
+  nha_foldername <- gsub(" ", "", nha_siteName, fixed=TRUE)
   nha_foldername <- gsub("#", "", nha_foldername, fixed=TRUE)
   nha_foldername <- gsub("''", "", nha_foldername, fixed=TRUE)
 }
@@ -68,3 +82,21 @@ deletepdfjunk <- function(pdf_filename){
     }
   }
 }
+
+#Function to assign images to each species in table, based on element type
+EO_ImSelect <- function(x) {
+  ifelse(SD_speciesTable$ELEMENT_TYPE=='A', "Amphibians.png", 
+         ifelse(SD_speciesTable$ELEMENT_TYPE=='B', "Birds.png", 
+                ifelse(SD_speciesTable$ELEMENT_TYPE=='C', "Communities.png",
+                       ifelse(SD_speciesTable$ELEMENT_TYPE=='F', "Fish.png",
+                              ifelse(SD_speciesTable$ELEMENT_TYPE=='IA', "Odonates.png",
+                                     ifelse(SD_speciesTable$ELEMENT_TYPE=='ID', "Odonates.png",
+                                            ifelse(SD_speciesTable$ELEMENT_TYPE=='IB', "Butterflies.png",
+                                                   ifelse(SD_speciesTable$ELEMENT_TYPE=='IM', "Moths.png",
+                                                          ifelse(SD_speciesTable$ELEMENT_TYPE=='IT', "TigerBeetles.png",
+                                                                 ifelse(SD_speciesTable$ELEMENT_TYPE=='M', "Mammals.png",
+                                                                        ifelse(SD_speciesTable$ELEMENT_TYPE == 'U', "Mussels.png",
+                                                                               ifelse(SD_speciesTable$ELEMENT_TYPE == 'MU', "Mussels.png",
+                                                                                      ifelse(SD_speciesTable$ELEMENT_TYPE == 'P', "Plants.png", "Snails.png")
+                                                                               ))))))))))))
+} 
