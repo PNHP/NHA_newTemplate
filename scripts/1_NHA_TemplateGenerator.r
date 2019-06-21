@@ -36,6 +36,8 @@ if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenSt
   require(OpenStreetMap)
 if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
   require(openxlsx)
+# if (!requireNamespace("odbc", quietly = TRUE)) install.packages("odbc")
+#   require(odbc)
 
 # note: we need to install 64bit java: https://www.java.com/en/download/manual.jsp
 
@@ -63,54 +65,38 @@ selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_re
 
 SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R","SENSITIVE_")] # subset to columns that are needed.
 
-#Function to assign images to each species in table, based on element type
-EO_ImSelect <- function(x) {
-  ifelse(SD_speciesTable$ELEMENT_TYPE=='A', "Amphibians.png", 
-         ifelse(SD_speciesTable$ELEMENT_TYPE=='B', "Birds.png", 
-                ifelse(SD_speciesTable$ELEMENT_TYPE=='C', "Communities.png",
-                       ifelse(SD_speciesTable$ELEMENT_TYPE=='F', "Fish.png",
-                              ifelse(SD_speciesTable$ELEMENT_TYPE=='IA', "Odonates.png",
-                                     ifelse(SD_speciesTable$ELEMENT_TYPE=='ID', "Odonates.png",
-                                            ifelse(SD_speciesTable$ELEMENT_TYPE=='IB', "Butterflies.png",
-                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='IM', "Moths.png",
-                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='IT', "TigerBeetles.png",
-                                                  ifelse(SD_speciesTable$ELEMENT_TYPE=='M', "Mammals.png",
-                                                  ifelse(SD_speciesTable$ELEMENT_TYPE == 'U', "Mussels.png",
-                                                  ifelse(SD_speciesTable$ELEMENT_TYPE == 'MU', "Mussels.png",
-                                          ifelse(SD_speciesTable$ELEMENT_TYPE == 'P', "Plants.png", "Snails.png")
-                                                                               ))))))))))))
-}            
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="G_RANK")] <- "GRANK"
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="S_RANK")] <- "SRANK"
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="S_PROTECTI")] <- "SPROT"
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="LAST_OBS_D")] <- "LASTOBS"
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="BASIC_EO_R")] <- "EORANK"
+colnames(SD_speciesTable)[which(names(SD_speciesTable)=="SENSITIVE_")] <- "SENSITIVE"
 
-#add a column in NHA selected species table for the image path, and assign image
+TRdb <- dbConnect(SQLite(), dbname=TRdatabasename) #connect to SQLite DB
+Join_ElSubID <- dbGetQuery(TRdb, paste0("SELECT ELSubID, ELCODE FROM ET"," WHERE ELCODE IN (", paste(toString(sQuote(SD_speciesTable$ELCODE)), collapse = ", "), ");"))
+dbDisconnect(TRdb)
+SD_speciesTable <- merge(SD_speciesTable, Join_ElSubID, by="ELCODE")  # merge in the ELSubID until we get it fixed in the GIS layer
+
+         
+#add a column in NHA selected species table for the image path, and assign image. Note: this uses the EO_ImSelect function
 for(i in 1:nrow(SD_speciesTable)){
   SD_speciesTable$Images <- EO_ImSelect(SD_speciesTable[i,])
 }
-#substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request)
-SD_speciesTable <- within(SD_speciesTable, Images[SENSITIVE_=="Y"] <- "Sensitive.png") 
-
-#subset out freshwater sponges
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IZSPN")] <- "Sponges.png") 
-#subset out beetles
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IICOL")] <- "TigerBeetles.png") 
-#subset out caddisflies + stoneflies (?)
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IITRI")] <- "Caddisflies.png")
-#subset out stoneflies/mayflies
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIEPH")] <- "OtherInverts.png")
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIPLE")] <- "OtherInverts.png")
-#subset out craneflies
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIDIP")] <- "Craneflies.png")
-#subset out liverworts
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NBHEP")] <- "Liverworts.png")
-#subset out mosses
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NLT")] <- "Mosses.png")
-#subset out earwig scorpionflies
-SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIME")] <- "earwigscorpionfly.png")
+# assign the icon images
+SD_speciesTable <- within(SD_speciesTable, Images[SENSITIVE=="Y"] <- "Sensitive.png") #substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request) 
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IZSPN")] <- "Sponges.png") #subset out freshwater sponges
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IICOL")] <- "TigerBeetles.png") #subset out beetles
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IITRI")] <- "Caddisflies.png") #subset out caddisflies + stoneflies (?)
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIEPH")] <- "OtherInverts.png") #subset out stoneflies/mayflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIPLE")] <- "OtherInverts.png") #subset out stoneflies/mayflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIDIP")] <- "Craneflies.png") #subset out craneflies
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NBHEP")] <- "Liverworts.png") #subset out liverworts
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "NLT")] <- "Mosses.png") #subset out mosses
+SD_speciesTable <- within(SD_speciesTable, Images[startsWith(ELCODE, "IIME")] <- "earwigscorpionfly.png") #subset out earwig scorpionflies
 
 # write this table to the SQLite database
 speciesTable4db <- SD_speciesTable
-names(speciesTable4db) <- c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","GRANK","SRANK","SPROT","PBSSTATUS","LASTOBS","EORANK","SENSITIVE","Images")
 speciesTable4db <- cbind(selected_nha$NHA_JOIN_ID, speciesTable4db)
-
 colnames(speciesTable4db)[which(names(speciesTable4db) == "selected_nha$NHA_JOIN_ID")] <- "NHA_JOIN_ID"
 speciesTable4db$NHA_JOIN_ID <- as.character(speciesTable4db$NHA_JOIN_ID)
 
@@ -127,25 +113,23 @@ ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse 
 ptreps <- arc.open(paste(biotics_gdb,"eo_ptreps",sep="/"))
 ptreps_selected <- arc.select(ptreps, fields=c("EO_ID", "SNAME", "EO_DATA", "GEN_DESC","MGMT_COM","GENERL_COM"), where_clause=paste("EO_ID IN (", eoid_list, ")",sep="") )
 
+#################################################################################################################################
 # calculate the site significance rank based on the species present at the site #################################################
 source(here::here("scripts","nha_ThreatsRecDatabase","2_loadSpeciesWeights.r"))
 
-sigrankspecieslist <- SD_speciesTable[c("SNAME","G_RANK","S_RANK","BASIC_EO_R")]
-colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "BASIC_EO_R")] <- "EORANK"
-colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "G_RANK")] <- "GRANK"
-colnames(sigrankspecieslist)[which(names(sigrankspecieslist) == "S_RANK")] <- "SRANK"
+sigrankspecieslist <- SD_speciesTable[c("SNAME","GRANK","SRANK","EORANK")]
 
-sigrankspecieslist <- sigrankspecieslist[which(sigrankspecieslist$GRANK!="GNR"),]
+sigrankspecieslist <- sigrankspecieslist[which(sigrankspecieslist$GRANK!="GNR"&!is.na(sigrankspecieslist$EORANK)),]
 
 sigrankspecieslist <- merge(sigrankspecieslist, rounded_grank, by="GRANK")
 sigrankspecieslist <- merge(sigrankspecieslist, rounded_srank, by="SRANK")
 sigrankspecieslist <- merge(sigrankspecieslist, nha_EORANKweights, by="EORANK")
-#nha_gsrankMatrix["G5","S3"]
-sigrankspecieslist$rarityscore <- nha_gsrankMatrix[sigrankspecieslist$GRANK_rounded,sigrankspecieslist$SRANK_rounded]
 
-sigrankspecieslist$totalscore <- sigrankspecieslist$rarityscore * sigrankspecieslist$Weight
-
-selected_nha$site_score <- sum(sigrankspecieslist$totalscore)
+for(i in 1:nrow(sigrankspecieslist)){
+  sigrankspecieslist$rarityscore[i] <- nha_gsrankMatrix[sigrankspecieslist$GRANK_rounded[i],sigrankspecieslist$SRANK_rounded[i]]  
+}
+sigrankspecieslist$totalscore <- sigrankspecieslist$rarityscore * sigrankspecieslist$Weight # calculate the total score for each species
+selected_nha$site_score <- sum(sigrankspecieslist$totalscore) # sum that score across all species
 
 if(selected_nha$site_score==0){
   selected_nha$site_rank <- "Local"
@@ -161,24 +145,14 @@ if(selected_nha$site_score==0){
 
 #generate URLs for each EO at site
 URL_EOs <- sapply(seq_along(ptreps_selected$EO_ID), function(x)  paste("https://bioticspa.natureserve.org/biotics/services/page/Eo/",ptreps_selected$EO_ID[x],".html", sep=""))
-
 URL_EOs <- sapply(seq_along(URL_EOs), function(x) paste("(",URL_EOs[x],")", sep=""))
 Sname_link <- sapply(seq_along(ptreps_selected$SNAME), function(x) paste("[",ptreps_selected$SNAME[x],"]", sep=""))
 Links <- paste(Sname_link, URL_EOs, sep="") 
 
-#Connect to threats and recommendations SQLite database, pull in data
-databasename <- "nha_recs.sqlite" 
-databasename <- here::here("_data","databases",databasename)
-
-TRdb <- dbConnect(SQLite(), dbname=databasename) #connect to SQLite DB
-#src_dbi(TRdb) #check structure of database
-
+TRdb <- dbConnect(SQLite(), dbname=TRdatabasename) #connect to SQLite DB
 # trying this Chris' way because its awesomer....
-ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELCODE IN (", paste(toString(sQuote(SD_speciesTable$ELCODE)), collapse = ", "), ");"))
-
-ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE ID IN (", paste(toString(sQuote(ElementTR$ID)), collapse = ", "), ");"))
-#ElementTR <- tbl(TRdb, "ElementThreatRecs")
-#ThreatRecTable <- tbl(TRdb, "ThreatRecTable")
+ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELSubID IN (", paste(toString(sQuote(SD_speciesTable$ELSubID)), collapse = ", "), ");"))
+ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE TRID IN (", paste(toString(sQuote(ElementTR$TRID)), collapse = ", "), ");"))
 
 #join general threats/recs table with the element table 
 ELCODE_TR <- ElementTR %>%
@@ -186,7 +160,7 @@ ELCODE_TR <- ElementTR %>%
 
 # set up the temp directories
 NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_foldername,sep="/")
-dir.create(NHAdest1, showWarnings = F) # make a folder for each site
+dir.create(NHAdest1, showWarnings=FALSE) # make a folder for each site
 dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder for each site
 
 # make the maps
