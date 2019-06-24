@@ -171,7 +171,7 @@ basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
 # plot it
 tmap_mode("plot")
 nha_map <- tm_shape(basetiles, unit="m") +
-  tm_rgb() +
+  #tm_rgb() +
   tm_shape(nha_sf) +
   tm_borders("red", lwd=1.5)+
   tm_legend(show=FALSE) + 
