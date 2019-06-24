@@ -167,11 +167,11 @@ dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder 
 
 # make the maps
 mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
-basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
+basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5, use.colortable=FALSE)
 # plot it
 tmap_mode("plot")
 nha_map <- tm_shape(basetiles, unit="m") +
-  #tm_rgb() +
+  tm_rgb() +
   tm_shape(nha_sf) +
   tm_borders("red", lwd=1.5)+
   tm_legend(show=FALSE) + 
