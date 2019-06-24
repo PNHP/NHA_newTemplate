@@ -47,7 +47,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+#selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
 selected_nha <- arc.select(nha, where_clause="SITE_NAME='Hogback Barrens' AND STATUS='C'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 
@@ -156,9 +156,11 @@ TRdb <- dbConnect(SQLite(), dbname=TRdatabasename) #connect to SQLite DB
 # trying this Chris' way because its awesomer....
 ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELSubID IN (", paste(toString(sQuote(SD_speciesTable$ELSubID)), collapse = ", "), ");"))
 ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE TRID IN (", paste(toString(sQuote(ElementTR$TRID)), collapse = ", "), ");"))
+ET <- dbGetQuery(TRdb, paste0("SELECT SNAME, ELSubID FROM ET"," WHERE ELSubID IN (", paste(toString(sQuote(ElementTR$ELSubID)), collapse = ", "), ");"))
 
 #join general threats/recs table with the element table 
 ELCODE_TR <- ElementTR %>%
+  inner_join(ET) %>%
   inner_join(ThreatRecTable)
 
 # set up the temp directories
@@ -168,8 +170,7 @@ dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder 
 
 
 # make the maps
-mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Maps/MapServer/tile/{z}/{y}/{x}?'
-  basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
+
 mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
 basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5, use.colortable=FALSE)
 

@@ -113,6 +113,8 @@ Secondly, this section will contain a bulleted list of known conservation issues
 
 * *Aggressive non-native plant species are a particular threat to species is calcareous habitats. Invasive species known to be present at this site include xxxx, xxxx, xxxx, and xxxx. Monitor for invasive plant species and remove them prior to becoming dominant at this site, if possible. Target pioneer populations of invasive plants for immediate and continued removal.*  
 
+If you add any information that is supported by an additional reference, please include the full citation as a Word comment so that it can be added into the automatically generated reference list.
+
 <br><br><br><br>
 
 **Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format supplied below, adding additional tagged bullets as necessary, sequentially, until you have completed all the bullets you need:**
@@ -145,7 +147,7 @@ Included below is species-specific information on general conservation threats a
 
 #join tables and report threats and recs for selected species
 Sel_TR <- ELCODE_TR %>% 
-  select(ELSubID, CategoryName, Threats, Recs) %>% collect()
+  select(SNAME, CategoryName, Threats, Recs) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
 
