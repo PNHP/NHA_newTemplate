@@ -13,7 +13,7 @@
 
 
 # options
-options(useFancyQuotes = FALSE)
+options(useFancyQuotes=FALSE)
 
 # load the arcgis license
 arc.check_product() 
