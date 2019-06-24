@@ -45,9 +45,11 @@ if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
 source(here::here("scripts", "0_PathsAndSettings.r"))
 
 # open the NHA feature class and select and NHA
-nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
+serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
 
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Hogback Barrens' AND STATUS = 'C'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
+
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Hogback Barrens' AND STATUS='C'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha_siteName <- selected_nha$SITE_NAME
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
 nha_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
@@ -59,8 +61,8 @@ nha_sf <- arc.data2sf(selected_nha)
 
 ## Build the Species Table #########################
 # open the related species table and get the rows that match the NHA join id from above
-nha_relatedSpecies <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_SpeciesTable"))
-selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies) # , where_clause=paste("\"NHD_JOIN_ID\"","=",sQuote(selected_nha$NHA_JOIN_ID),sep=" ")  
+nha_relatedSpecies <- arc.open(paste(serverPath,"PNHP.DBO.NHA_SpeciesTable", sep="")) #(here::here("_data", "NHA_newTemplate.gdb",""))
+selected_nha_relatedSpecies <- arc.select(nha_relatedSpecies)  #, where_clause=paste("NHD_JOIN_ID","=",sQuote(selected_nha$NHA_JOIN_ID),sep="") 
 selected_nha_relatedSpecies <- selected_nha_relatedSpecies[which(selected_nha_relatedSpecies$NHA_JOIN_ID==selected_nha$NHA_JOIN_ID),] #! consider integrating with the previous line the select statement
 
 SD_speciesTable <- selected_nha_relatedSpecies[c("EO_ID","ELCODE","SNAME","SCOMNAME","ELEMENT_TYPE","G_RANK","S_RANK","S_PROTECTI","PBSSTATUS","LAST_OBS_D","BASIC_EO_R","SENSITIVE_")] # subset to columns that are needed.
