@@ -160,25 +160,6 @@ do.call(paste, Sel_TR)
 
 <br><br><br><br>
 
-# References  
-
-Below, see the list of references associated with the automated threats and recommendations bullets. Please copy and paste the references that are associated with bullets which you actually used to write this site report.  
-
-***  
-|REF_B|  
-
-*enter text here, between these tags. Please do not delete the tags!!*
-  
-|REF_E|   
-
-***  
-```{r References, echo=FALSE}
-
-Sel_Citations <- ELCODE_TR %>%
-  select(Citation_Full) %>% collect()
-do.call(paste, Sel_Citations)
-```
-
 # Location  
 Please indicate whether the information below is correct. Use Word comments to flag any issues.  
 

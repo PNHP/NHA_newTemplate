@@ -36,6 +36,7 @@ if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenSt
   require(OpenStreetMap)
 if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
   require(openxlsx)
+
 # if (!requireNamespace("odbc", quietly = TRUE)) install.packages("odbc")
 #   require(odbc)
 
@@ -47,7 +48,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 # open the NHA feature class and select and NHA
 nha <- arc.open(here::here("_data", "NHA_newTemplate.gdb","NHA_Core"))
 
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Hogback Barrens' AND STATUS = 'C'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha_siteName <- selected_nha$SITE_NAME
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
 nha_filename <- paste(nha_foldername,"_",gsub("[^0-9]", "", Sys.Date() ),".docx",sep="")
@@ -163,9 +164,11 @@ NHAdest1 <- paste(NHAdest,"DraftSiteAccounts",nha_foldername,sep="/")
 dir.create(NHAdest1, showWarnings=FALSE) # make a folder for each site
 dir.create(paste(NHAdest1,"photos", sep="/"), showWarnings = F) # make a folder for each site
 
+
 # make the maps
-mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
-basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
+mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Maps/MapServer/tile/{z}/{y}/{x}?'
+  basetiles <- tmaptools::read_osm(nha_sf, type=mtype, ext=1.5)
+
 # plot it
 tmap_mode("plot")
 nha_map <- tm_shape(basetiles, unit="m") +
