@@ -215,7 +215,7 @@ dbDisconnect(db_nha)
 # wb <- c("SITE_NAME","COUNTY","ASSIGNED_WRITER","TEMPLATE_COMPLETED","PDF_CREATED","NOTES")
 # write.xlsx(t(wb),file="P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", colNames=FALSE) #Create workbook for the first time
 
-NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY,ASSIGNED_WRITER="NA",TEMPLATE_COMPLETED="NA",PDF_CREATED="NA",NOTES="NA") #create new row for dataframe for current site 
+NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, DATE_TEMPLATE_GENERATED=Sys.Date(), ASSIGNED_WRITER="NA",TEMPLATE_COMPLETED="NA",PDF_CREATED="NA",NOTES="NA") #create new row for dataframe for current site 
 
 wb <- loadWorkbook("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx") #import excel file
 sheet1 <- read.xlsx(wb,sheet = 1) #select sheet of interest
