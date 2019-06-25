@@ -3,7 +3,7 @@ output: word_document
 ---
 
 # `r paste(as.character(nha_siteName), "NHA")` 
-Site significance rank: **`r paste(as.character(selected_nha$SIG_RANK))`**      
+Site significance rank: **`r paste(as.character(selected_nha$site_rank))`**  
 
 NHA Join ID: **`r paste(as.character(selected_nha$NHA_JOIN_ID))`**    
 
@@ -61,8 +61,10 @@ SD_speciesTablePrint$SCOMNAME <- NULL
 
 row.names(SD_speciesTablePrint) <- SD_speciesTable$SNAME
 
+
+
 #Print species table for site
-STable <- flextable(head(SD_speciesTablePrint))
+STable <- flextable(SD_speciesTablePrint)
 STable <- fontsize(STable, part="all", size=7)
 STable <- italic(STable, j= ~ SNAME, italic=TRUE)
 STable <- rotate(STable, rotation = "tbrl", part = "header", align = "center")
@@ -140,7 +142,7 @@ Included below is species-specific information on general conservation threats a
 
 1.  A summary table with the number of EOs that fall into each of the conservation threats/recommendations categories at the site. This table is meant to help you quickly summarize the types of issues that the species present at this site face, for the threats and conservation recommendations summary paragraph.   
 
-2. The text for each species-specific threat and recommendation available in the database. Copy and paste those which are relevant at this site into conservation threats and recommendations bullets.
+2. The text for each species-specific threat and recommendation available in the database. Copy and paste those which are relevant at this site into conservation threats and recommendations bullets. Citations are tagged within the text using the format "\\cite{CITATION CODE}", please do not delete these if they are incorporated into the threat/rec bullets.
 
 
 ``` {r EO Threats Database, echo=FALSE}

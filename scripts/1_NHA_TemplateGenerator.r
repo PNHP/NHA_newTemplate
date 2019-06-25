@@ -49,7 +49,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
 #selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Bairdstown' AND STATUS='NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Cherry Run at Cochrans Mills' AND STATUS='NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 
 nha_siteName <- selected_nha$SITE_NAME
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
@@ -132,7 +132,7 @@ for(i in 1:nrow(sigrankspecieslist)){
   sigrankspecieslist$rarityscore[i] <- nha_gsrankMatrix[sigrankspecieslist$GRANK_rounded[i],sigrankspecieslist$SRANK_rounded[i]]  
 }
 sigrankspecieslist$totalscore <- sigrankspecieslist$rarityscore * sigrankspecieslist$Weight # calculate the total score for each species
-selected_nha$site_score <- sum(sigrankspecieslist$totalscore) # sum that score across all species
+selected_nha$site_score <- sum(sigrankspecieslist$totalscore, na.rm=TRUE) # sum that score across all species
 
 if(selected_nha$site_score==0){
   selected_nha$site_rank <- "Local"
@@ -215,7 +215,7 @@ dbDisconnect(db_nha)
 # wb <- c("SITE_NAME","COUNTY","ASSIGNED_WRITER","TEMPLATE_COMPLETED","PDF_CREATED","NOTES")
 # write.xlsx(t(wb),file="P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", colNames=FALSE) #Create workbook for the first time
 
-NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="NA",TEMPLATE_COMPLETED="NA",PDF_CREATED="NA",NOTES="NA", FOLDER_PATH=NHAdest1) #create new row for dataframe for current site 
+NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="",TEMPLATE_COMPLETED="",   PDF_CREATED="", NOTES="", FOLDER_PATH=NHAdest1) #create new row for dataframe for current site 
 
 wb <- loadWorkbook("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx") #import excel file
 sheet1 <- read.xlsx(wb,sheet = 1) #select sheet of interest
