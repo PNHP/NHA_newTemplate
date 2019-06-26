@@ -36,6 +36,8 @@ if (!requireNamespace("OpenStreetMap", quietly = TRUE)) install.packages("OpenSt
   require(OpenStreetMap)
 if (!requireNamespace("openxlsx", quietly = TRUE)) install.packages("openxlsx")
   require(openxlsx)
+if (!requireNamespace("sf", quietly = TRUE)) install.packages("sf")
+require(sf)
 
 # if (!requireNamespace("odbc", quietly = TRUE)) install.packages("odbc")
 #   require(odbc)
@@ -59,6 +61,9 @@ selected_nha$nha_filename <- nha_filename
 
 # convert geometry to simple features for the map
 nha_sf <- arc.data2sf(selected_nha)
+a <- st_area(nha_sf) #calculate area
+a <- a*0.000247105 #convert m2 to acres
+selected_nha$Acres <- as.numeric(a)
 
 ## Build the Species Table #########################
 # open the related species table and get the rows that match the NHA join id from above
@@ -215,7 +220,7 @@ dbDisconnect(db_nha)
 # wb <- c("SITE_NAME","COUNTY","ASSIGNED_WRITER","TEMPLATE_COMPLETED","PDF_CREATED","NOTES")
 # write.xlsx(t(wb),file="P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", colNames=FALSE) #Create workbook for the first time
 
-NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="",TEMPLATE_COMPLETED="",   PDF_CREATED="", NOTES="", FOLDER_PATH=gsub("/","\\\\", NHAdest1)) #create new row for dataframe for current site 
+NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="",TEMPLATE_COMPLETED="", CONTENT_DATABASED="", PDF_CREATED="", NOTES="", FOLDER_PATH=gsub("/","\\\\", NHAdest1)) #create new row for dataframe for current site 
 
 wb <- loadWorkbook("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx") #import excel file
 sheet1 <- read.xlsx(wb,sheet = 1) #select sheet of interest

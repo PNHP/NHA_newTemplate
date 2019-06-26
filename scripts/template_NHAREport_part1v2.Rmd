@@ -33,7 +33,7 @@ Site Description - this should be about a one paragraph description of the site 
 <br><br><br><br>
 Paragraphs can be added to supply more detail about each species or group of species at this NHA, if you want. If information is added, try to keep it general and not have a lot of detail about each specific taxon as it will help to keep the sites as current as possible without a lot of ongoing editing-remember, we are going to rely on the factsheets for that purpose.  For example, it would be good to say something like "The dragonflies at this site depend on clean water to breed" as that statement would likely be true even if we added or subtracted species to the list.
 
-This brief description from the NHA geodatabase for this site reads: **`r selected_nha[7]$BRIEF_DESC`**  
+The brief description from the NHA geodatabase for this site reads: **`r selected_nha[7]$BRIEF_DESC`**  
 
 <br><br><br><br>
 
@@ -140,7 +140,7 @@ If you add any information that is supported by an additional reference, please 
 Included below is species-specific information on general conservation threats and recommendations. This includes:  
 <br><br><br><br>
 
-1.  A summary table with the number of EOs that fall into each of the conservation threats/recommendations categories at the site. This table is meant to help you quickly summarize the types of issues that the species present at this site face, for the threats and conservation recommendations summary paragraph.   
+1.  A summary table with the number of EOs that fall into each of the conservation threats/recommendations categories at the site. This table is meant to help you quickly summarize for yourself the types of issues that the species present at this site face, for the threats and conservation recommendations summary paragraph.   
 
 2. The text for each species-specific threat and recommendation available in the database. Copy and paste those which are relevant at this site into conservation threats and recommendations bullets. Citations are tagged within the text using the format "\\cite{CITATION CODE}", please do not delete these if they are incorporated into the threat/rec bullets.
 
