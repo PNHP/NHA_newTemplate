@@ -49,7 +49,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
 #selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Cherry Run at Cochrans Mills' AND STATUS='NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Whiskey Run' AND STATUS='NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 
 nha_siteName <- selected_nha$SITE_NAME
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
@@ -215,7 +215,7 @@ dbDisconnect(db_nha)
 # wb <- c("SITE_NAME","COUNTY","ASSIGNED_WRITER","TEMPLATE_COMPLETED","PDF_CREATED","NOTES")
 # write.xlsx(t(wb),file="P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx", colNames=FALSE) #Create workbook for the first time
 
-NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="",TEMPLATE_COMPLETED="",   PDF_CREATED="", NOTES="", FOLDER_PATH=NHAdest1) #create new row for dataframe for current site 
+NHA_rec <- data.frame(SITE_NAME=selected_nha$SITE_NAME, COUNTY=selected_nha$COUNTY, ASSIGNED_WRITER="",TEMPLATE_COMPLETED="",   PDF_CREATED="", NOTES="", FOLDER_PATH=gsub("/","\\\\", NHAdest1)) #create new row for dataframe for current site 
 
 wb <- loadWorkbook("P:/Conservation Programs/Natural Heritage Program/ConservationPlanning/NaturalHeritageAreas/_NHA/NHA_SitesSummary.xlsx") #import excel file
 sheet1 <- read.xlsx(wb,sheet = 1) #select sheet of interest
