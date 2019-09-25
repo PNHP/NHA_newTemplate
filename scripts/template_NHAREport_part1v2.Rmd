@@ -92,52 +92,12 @@ do.call(paste, SD_eodatap)
 
 ```
 
-# Threats and Conservation Recommendations
-
-This area should include, first, a short, one paragraph description of the overall threats and conservation recommendations for the NHA. This paragraph could include an overview of historic impacts, a general statement about the level of site protection, existing management plans, and known conservation issues. Incorporate information specific to the site overall, as well as to the individual EO's present.
-
-<br><br><br><br>
-
-**Enter your threats and conservation recommendations summary paragraph in the space between these lines:**
-
-***  
-|THRRECP_B|  
-
-*enter text here, between these tags. Please do not delete the tags!!*
-  
-|THRRECP_E|   
-
-***  
-
-<br><br><br><br>
-
-Secondly, this section will contain a bulleted list of known conservation issues at this site, and what needs to be done to address them. Use the pre-generated EO-associated conservation threats and recommendations available below as a starting point. Be as specific as you possibly can--for example, if an EO is generally known to be susceptible to invasive species and there is information in Biotics about particular invasive species known to be present at this site, incorporate the specific information into the pre-written invasive species bullet. For example:  
-
-* *Aggressive non-native plant species are a particular threat to species is calcareous habitats. Invasive species known to be present at this site include xxxx, xxxx, xxxx, and xxxx. Monitor for invasive plant species and remove them prior to becoming dominant at this site, if possible. Target pioneer populations of invasive plants for immediate and continued removal.*  
-
-If you add any information that is supported by an additional reference, please include the full citation as a Word comment so that it can be added into the automatically generated reference list.
-
-<br><br><br><br>
-
-**Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format supplied below, adding additional tagged bullets as necessary, sequentially, until you have completed all the bullets you need:**
-
-***  
-|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E| 
-
-|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|   
-
-|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|  
-
-*add as many additional tagged bullets as needed, or remove unused bullets if you have fewer than 3 items*  
-
-
-***  
-
 <br><br><br><br>
 
 ## EO-Specific Threats and Conservation Recommendation Info
 
-Included below is species-specific information on general conservation threats and recommendations. This includes:  
+Included below is species-specific information on general conservation threats and recommendations, to be used to complete the threats and recommendations section of the NHA report. This includes:  
+
 <br><br><br><br>
 
 1.  A summary table with the number of EOs that fall into each of the conservation threats/recommendations categories at the site. This table is meant to help you quickly summarize for yourself the types of issues that the species present at this site face, for the threats and conservation recommendations summary paragraph.   
@@ -161,6 +121,49 @@ ThreatCatTable
 do.call(paste, Sel_TR)
 
 ```
+
+<br><br><br><br>
+
+# Threats and Conservation Recommendations
+
+This area should include, first, a short, one paragraph description of the overall threats and conservation recommendations for the NHA. This paragraph could include an overview of historic impacts, a general statement about the level of site protection, existing management plans, and known site conservation issues. Incorporate information specific to the site overall, as well as to the individual EOs.
+
+<br><br><br><br>
+
+**Enter your threats and conservation recommendations summary paragraph in the space between these lines:**
+
+***  
+|THRRECP_B|  
+
+*enter text here, between these tags. Please do not delete the tags!!*
+  
+|THRRECP_E|   
+
+***  
+
+<br><br><br><br>
+
+Secondly, this section will contain a bulleted list of known conservation issues at this site, and what needs to be done to address them. Use the pre-generated EO-associated conservation threats and recommendations available above as a starting point. Be as specific as you possibly can--for example, if an EO is generally known to be susceptible to invasive species and there is information in Biotics about particular invasive species known to be present at this site, incorporate the specific information into the pre-written invasive species bullet. For example:  
+
+* *Aggressive non-native plant species are a particular threat to species is calcareous habitats. Invasive species known to be present at this site include xxxx, xxxx, xxxx, and xxxx. Monitor for invasive plant species and remove them prior to becoming dominant at this site, if possible. Target pioneer populations of invasive plants for immediate and continued removal.*  
+
+If you add any information that is supported by an additional reference, please include the full citation as a Word comment so that it can be added into the automatically generated reference list.
+
+<br><br><br><br>
+
+**Enter your specific threats and conservation recommendations bullets in the space between these lines. Please use the tagging format supplied below, adding additional tagged bullets as necessary, sequentially, until you have completed all the bullets you need:**
+
+***  
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E| 
+
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|   
+
+|BULL_B| *bullet text, between these tags, Please do not delete these tags!!* |BULL_E|  
+
+*add as many additional tagged bullets as needed, or remove unused bullets if you have fewer than 3 items*  
+
+
+***  
 
 <br><br><br><br>
 
