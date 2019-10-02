@@ -51,7 +51,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
 #selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
-selected_nha <- arc.select(nha, where_clause="SITE_NAME='Whiskey Run' AND STATUS='NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+selected_nha <- arc.select(nha, where_clause="SITE_NAME='Mahoning River at Edinburg' AND STATUS='NR'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
 
 nha_siteName <- selected_nha$SITE_NAME
 nha_foldername <- foldername(nha_siteName) # this now uses a user-defined function
@@ -162,6 +162,9 @@ TRdb <- dbConnect(SQLite(), dbname=TRdatabasename) #connect to SQLite DB
 ElementTR <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELSubID IN (", paste(toString(sQuote(SD_speciesTable$ELSubID)), collapse = ", "), ");"))
 ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE TRID IN (", paste(toString(sQuote(ElementTR$TRID)), collapse = ", "), ");"))
 ET <- dbGetQuery(TRdb, paste0("SELECT SNAME, ELSubID FROM ET"," WHERE ELSubID IN (", paste(toString(sQuote(ElementTR$ELSubID)), collapse = ", "), ");"))
+
+# Generate paths to previous site accounts for the area included in the present NHA
+OldSiteAcct_path <- paste0(c("P:\\Conservation Programs\\Natural Heritage Program\\ConservationPlanning\\NaturalHeritageAreas\\SiteDescriptions\\=",selected_nha$COUNTY," CNHI site descriptions\\",selected_nha$OLD_SITE_NAME,".pdf"))
 
 #join general threats/recs table with the element table 
 ELCODE_TR <- ElementTR %>%
