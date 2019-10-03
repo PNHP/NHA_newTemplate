@@ -37,9 +37,16 @@ The brief description from the NHA geodatabase for this site reads: **`r selecte
 
 The following old NHA sites overlap with the current NHA: `r selected_nha$OLD_SITE_NAME`
 
-You can access these old site accounts on the P drive, here: 
+You can access each of these old site accounts on the P drive, in the following locations: 
 ```{r old site account, echo=FALSE}
-cat(OldSiteAcct_path, sep="")
+### this is still not working ###
+N <- length(OldNames_path)
+x <- list()
+for (i in 1:N) {
+  x[i]  <- capture.output(cat(unlist(OldNames_path[i]), sep=""))
+}
+
+x
 ```
 
 
