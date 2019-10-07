@@ -115,6 +115,20 @@ dbExecute(db_nha, paste("DELETE FROM nha_species WHERE NHA_JOIN_ID = ", sQuote(s
 dbAppendTable(db_nha, "nha_species", speciesTable4db)
 dbDisconnect(db_nha)
 
+#check whether there are multiple EOs in the species table for the same species, and only keep one record for each species, the most recently observed entry
+duplic_Spp <- SD_speciesTable %>%
+                  group_by(ELCODE) %>%
+                  mutate(dupe=n()>1)
+duplic_Spp <- as.data.frame(duplic_Spp)
+duplic_Spp2 <- duplic_Spp[(duplic_Spp$dupe != TRUE),] #remove rows which are the same species
+same <- duplic_Spp[(duplic_Spp$dupe == TRUE),]#select the rows which are the same
+same <- same[order(same$LASTOBS, decreasing=TRUE),] #sort by date, so that when unique is called, the most recent rows are preserved
+unique <- unique(same[,-15])#remove the duplication code column
+
+SD_speciesTable <- duplic_Spp2[,-15] #remove the duplication code column
+SD_speciesTable <- as.data.frame(rbind(SD_speciesTable, unique))
+
+###
 eoid_list <- paste(toString(SD_speciesTable$EO_ID), collapse = ",")  # make a list of EOIDs to get data from
 ELCODE_list <- paste(toString(sQuote(unique(SD_speciesTable$ELCODE))), collapse = ",")  # make a list of EOIDs to get data from
 
@@ -164,7 +178,8 @@ ThreatRecTable  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHER
 ET <- dbGetQuery(TRdb, paste0("SELECT SNAME, ELSubID FROM ET"," WHERE ELSubID IN (", paste(toString(sQuote(ElementTR$ELSubID)), collapse = ", "), ");"))
 
 # Generate paths to previous site accounts for the area included in the present NHA
-OldNames <- strsplit(selected_nha$OLD_SITE_NAME, split=",") #split comma-separated list of old site names into individual elements
+OldNames <- gsub(", ", ",",selected_nha$OLD_SITE_NAME) #remove spaces after comma
+OldNames <- strsplit(OldNames, split=",") #split comma-separated list of old site names into individual elements
 OldNames <- unlist(OldNames)
 
 N <- length(OldNames)

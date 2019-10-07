@@ -37,20 +37,44 @@ The brief description from the NHA geodatabase for this site reads: **`r selecte
 
 The following old NHA sites overlap with the current NHA: `r selected_nha$OLD_SITE_NAME`
 
-You can access each of these old site accounts on the P drive, in the following locations: 
-```{r old site account, echo=FALSE}
-### this is still not working ###
-N <- length(OldNames_path)
-x <- list()
-for (i in 1:N) {
-  x[i]  <- capture.output(cat(unlist(OldNames_path[i]), sep=""))
-}
-
-x
+You can access each of these old site accounts on the P drive, in the following locations:
+```{r print site path 1, echo=FALSE, results='asis'}
+if (N >= 1) {
+  cat(x[1])  
+} 
 ```
 
-
 <br><br><br><br>
+```{r print site path 2, echo=FALSE, results='asis'}
+if (N >= 2) {
+  cat(x[2])  
+}  
+```
+<br><br><br><br>
+```{r print site path 3, echo=FALSE, results='asis'}
+if (N >= 3) {
+  cat(x[3])  
+}
+```
+<br><br><br><br>
+
+```{r print site path 4, echo=FALSE, results='asis'}
+if (N >= 4) {
+  cat(x[4])  
+}  
+```
+<br><br><br><br>
+```{r print site path 5, echo=FALSE, results='asis'}
+if (N >= 5) {
+  cat(x[5])  
+}  
+```
+<br><br><br><br>
+If this NHA occurs in Butler or Washington County, find those site inventories online here:
+[Butler] (http://www.naturalheritage.state.pa.us/CNAI_PDFs/Butler_CNHI_WEB_2011.pdf)
+[Washington] (http://www.naturalheritage.state.pa.us/CNAI_PDFs/Washington%20County%20NHI%201994%20WEB.pdf)  
+
+<br><br><br><br>  
 
 **Enter your site description text in the space between these lines:**
 
