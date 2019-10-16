@@ -187,9 +187,14 @@ OldNames_path <- list()
 
 #loop through each old site name to create a list of the elements needed to create the file path to that site account
 for (i in 1:N) {
-  temp <- paste0(c("P:\\Conservation Programs\\Natural Heritage Program\\ConservationPlanning\\NaturalHeritageAreas\\SiteDescriptions\\=",selected_nha$COUNTY," CNHI site descriptions\\",OldNames[i],".pdf"))
+  temp <- paste0(c("P:\\\\Conservation Programs\\\\Natural Heritage Program\\\\ConservationPlanning\\\\NaturalHeritageAreas\\\\SiteDescriptions\\\\=",selected_nha$COUNTY," CNHI site descriptions\\\\", OldNames[i],".pdf"))
   
   OldNames_path[[paste0("OldNames",i)]] <- temp
+}
+
+x <- NULL
+for (i in 1:N) {
+  x[i]  <- paste0(unlist(OldNames_path[i]), sep="", collapse="")
 }
 
 #join general threats/recs table with the element table 
