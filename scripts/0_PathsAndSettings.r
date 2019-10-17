@@ -84,20 +84,34 @@ deletepdfjunk <- function(pdf_filename){
   }
 }
 
-#Function to assign images to each species in table, based on element type
+#Function to assign images to each species in table, based on element type; modified to work through a loop of multiple species tables
 EO_ImSelect <- function(x) {
-  ifelse(SD_speciesTable$ELEMENT_TYPE=='A', "Amphibians.png", 
-         ifelse(SD_speciesTable$ELEMENT_TYPE=='B', "Birds.png", 
-                ifelse(SD_speciesTable$ELEMENT_TYPE=='C', "Communities.png",
-                       ifelse(SD_speciesTable$ELEMENT_TYPE=='F', "Fish.png",
-                              ifelse(SD_speciesTable$ELEMENT_TYPE=='IA', "Odonates.png",
-                                     ifelse(SD_speciesTable$ELEMENT_TYPE=='ID', "Odonates.png",
-                                            ifelse(SD_speciesTable$ELEMENT_TYPE=='IB', "Butterflies.png",
-                                                   ifelse(SD_speciesTable$ELEMENT_TYPE=='IM', "Moths.png",
-                                                          ifelse(SD_speciesTable$ELEMENT_TYPE=='IT', "TigerBeetles.png",
-                                                                 ifelse(SD_speciesTable$ELEMENT_TYPE=='M', "Mammals.png",
-                                                                        ifelse(SD_speciesTable$ELEMENT_TYPE == 'U', "Mussels.png",
-                                                                               ifelse(SD_speciesTable$ELEMENT_TYPE == 'MU', "Mussels.png",
-                                                                                      ifelse(SD_speciesTable$ELEMENT_TYPE == 'P', "Plants.png", "Snails.png")
+  ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='A', "Amphibians.png", 
+         ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='B', "Birds.png", 
+                ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='C', "Communities.png",
+                       ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='F', "Fish.png",
+                              ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='IA', "Odonates.png",
+                                     ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='ID', "Odonates.png",
+                                            ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='IB', "Butterflies.png",
+                                                   ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='IM', "Moths.png",
+                                                          ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='IT', "TigerBeetles.png",
+                                                                 ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE=='M', "Mammals.png",
+                                                                        ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE == 'U', "Mussels.png",
+                                                                               ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE == 'MU', "Mussels.png",
+                                                                                      ifelse(SD_speciesTable[[i]]$ELEMENT_TYPE == 'P', "Plants.png", "Snails.png")
                                                                                ))))))))))))
 } 
+
+#Function to go back through and further subset EOs into finer taxa groupings
+EO_ImFix <- function(x){
+SD_speciesTable[[i]] <- within(SD_speciesTable, Images[SENSITIVE=="Y"] <- "Sensitive.png") #substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request) 
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IZSPN")] <- "Sponges.png") #subset out freshwater sponges
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IICOL")] <- "TigerBeetles.png") #subset out beetles
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IITRI")] <- "Caddisflies.png") #subset out caddisflies + stoneflies (?)
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IIEPH")] <- "OtherInverts.png") #subset out stoneflies/mayflies
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IIPLE")] <- "OtherInverts.png") #subset out stoneflies/mayflies
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IIDIP")] <- "Craneflies.png") #subset out craneflies
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "NBHEP")] <- "Liverworts.png") #subset out liverworts
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "NLT")] <- "Mosses.png") #subset out mosses
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IIME")] <- "earwigscorpionfly.png") #subset out earwig scorpionflies
+}
