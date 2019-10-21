@@ -76,16 +76,6 @@ for (i in 1:length(nha_foldername_list)) {
 }
 nha_filename_list <- unlist(nha_filename_list) #list of file names
 
-#convert geometry to simple features for the map
-slnha <- list()
-nha_sf_list <- list()
-
-
-nha_sf <- arc.data2sf(selected_nhas)
-a <- st_area(nha_sf) #calculate area
-a <- a*0.000247105 #convert m2 to acres
-selected_nhas$Acres <- as.numeric(a)
-
 ####################################################
 ## Build the Species Table #########################
 # open the related species table and get the rows that match the NHA join ids from the selected NHAs
@@ -176,7 +166,6 @@ unique <- unique(same[,-15])#remove the duplication code column
 SD_speciesTable[[i]] <- as.data.frame(rbind(SD_speciesTable[[i]], unique))
 }
 
-
 ### Pull out info from Biotics for each site ###
 
 eoid_list <- list() #list of EOIDs to pull Biotics records with
@@ -258,3 +247,106 @@ for (i in seq_along(SummedTotalScore)) {
   }
 }
 
+SiteRank #list of site significance rankings
+
+#generate URLs for each EO at site
+URL_EOs <- list()
+for (i in 1:length(ptreps_selected)){
+URL_EOs[[i]] <- lapply(seq_along(ptreps_selected[[i]]$EO_ID), function(x)  paste("https://bioticspa.natureserve.org/biotics/services/page/Eo/",ptreps_selected[[i]]$EO_ID[x],".html", sep=""))
+URL_EOs[[i]] <- sapply(seq_along(URL_EOs[[i]]), function(x) paste("(",URL_EOs[[i]][x],")", sep=""))
+}
+
+Sname_link <- list()
+for (i in 1:length(ptreps_selected)){
+Sname_link[[i]] <- sapply(seq_along(ptreps_selected[[i]]$SNAME), function(x) paste("[",ptreps_selected[[i]]$SNAME[x],"]", sep=""))
+}
+
+Links <- mapply(paste, Sname_link, URL_EOs, sep="") #for R markdown, list of text plus hyperlinks to create links to biotics page for each EO at each site
+
+########
+#Pull out species-specific threats/recs from the database for each site
+########
+
+TRdb <- dbConnect(SQLite(), dbname=TRdatabasename) #connect to SQLite DB
+
+ElementTR <- list() #
+ThreatRecTable <- list()
+ET <- list()
+
+for (i in 1:length(SD_speciesTable)){
+ElementTR[[i]] <- dbGetQuery(TRdb, paste0("SELECT * FROM ElementThreatRecs"," WHERE ELSubID IN (", paste(toString(sQuote(SD_speciesTable[[i]]$ELSubID)), collapse = ", "), ");"))
+ThreatRecTable[[i]]  <- dbGetQuery(TRdb, paste0("SELECT * FROM ThreatRecTable"," WHERE TRID IN (", paste(toString(sQuote(ElementTR[[i]]$TRID)), collapse = ", "), ");"))
+ET[[i]] <- dbGetQuery(TRdb, paste0("SELECT SNAME, ELSubID FROM ET"," WHERE ELSubID IN (", paste(toString(sQuote(ElementTR[[i]]$ELSubID)), collapse = ", "), ");"))
+}
+
+#join general threats/recs table with the element table 
+ELCODE_TR <- list() #list of threat rec info to print for each site, to call in R Markdown
+
+for (i in 1:length(ElementTR)){
+ELCODE_TR[[i]] <- ElementTR[[i]] %>%
+  inner_join(ET[[i]]) %>%
+  inner_join(ThreatRecTable[[i]])
+}
+
+#####
+
+# Generate paths to previous site accounts for the area included in the present NHA
+OldNames <- NULL
+OldNames <- sapply(seq_along(selected_nhas$OLD_SITE_NAME), function(x) gsub(", ", ",",selected_nhas$OLD_SITE_NAME[x]))
+#remove spaces after comma
+OldNames <- sapply(seq_along(OldNames), function(x) strsplit(OldNames[x], split=",")) #split comma-separated list of old site names into individual elements
+}
+
+for (i in 1: length(OldNames)){
+  OldNames[[i]] <- unlist(OldNames[[i]])
+}
+
+N <- length(OldNames)
+temp <- list()
+#loop through each old site name to create a list of the elements needed to create the file path to that site account
+for (i in 1:N) {
+  temp[[i]] <- paste0(c("P:\\\\Conservation Programs\\\\Natural Heritage Program\\\\ConservationPlanning\\\\NaturalHeritageAreas\\\\SiteDescriptions\\\\=",selected_nha$COUNTY," CNHI site descriptions\\\\", OldNames[i],".pdf"))
+}  
+  
+x <- NULL #list of paths for URLs to old site accounts
+for (i in 1:N) {
+  x[i]  <- paste0(unlist(temp[i]), sep="", collapse="")
+}
+
+# set up the temp directories
+NHAdest1 <- sapply(seq_along(nha_foldername_list), function(x) paste(NHAdest,"DraftSiteAccounts",nha_foldername_list[x],sep="/"))
+sapply(seq_along(NHAdest1), function(x) dir.create(NHAdest1[x], showWarnings=FALSE)) # make a folder for each site, if those folders do not exist already
+sapply(seq_along(NHAdest1), function(x) dir.create(paste(NHAdest1[x],"photos", sep="/"), showWarnings = F)) # make a folder for each site, for photos
+
+
+#####
+# make the maps
+#####
+
+#convert geometry to simple features for the map
+slnha <- list()
+nha_sf_list <- list()
+
+nha_sf_list <- arc.data2sf(selected_nhas)
+a <- st_area(nha_sf_list) #calculate area
+a <- a*0.000247105 #convert m2 to acres
+selected_nhas$Acres <- as.numeric(a)
+
+mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
+#### having some trouble getting the basetiles working ####
+basetiles <- sapply(seq_along(nha_sf$OBJECTID), function(x) tmaptools::read_osm(nha_sf_list[x], type=mtype, ext=1.5, use.colortable=FALSE))
+
+### This is not working right now...###
+# plot it
+for (i in 1:length(nha_foldername_list)) {
+tmap_mode("plot")
+nha_map[[i]] <- tm_shape(basetiles[[i]], unit="m") +
+  tm_rgb() +
+  tm_shape(nha_sf[i,]) +
+  tm_borders("red", lwd=1.5)+
+  tm_legend(show=FALSE) + 
+  tm_layout(attr.color="white") +
+  tm_compass(type="arrow", position=c("left","bottom")) +
+  tm_scale_bar(position=c("center","bottom"))
+tmap_save(nha_map[[i]], filename=paste(NHAdest1[i], "/", nha_foldername_list[[i]],"_tempmap.png",sep=""), units="in", width=7) 
+}
