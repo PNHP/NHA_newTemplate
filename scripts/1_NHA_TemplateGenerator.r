@@ -228,6 +228,7 @@ tmap_save(nha_map, filename=paste(NHAdest1, "/", nha_foldername,"_tempmap.png",s
 
 
 ######### Write the output document for the site ###############
+ 
 rmarkdown::render(input=here::here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
                   output_file=nha_filename,
                   output_dir=NHAdest1)

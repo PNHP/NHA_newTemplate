@@ -50,7 +50,9 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 # open the NHA feature class and select and NHA
 #Load list of NHAs that you wish to generate site reports for
 NHA_list <- read.csv(here("_data", "sourcefiles", "NHAs_forReports.csv")) #download list that includes at least the site names and the NHA Join ID
+NHA_list <- NHA_list[order(NHA_list$Site.Name),] #order alphabetically
 Site_Name_List <- as.vector(NHA_list$Site.Name)
+Site_Name_List <- as.list(Site_Name_List)
 SQLquery_Sites <- paste("SITE_NAME IN(",paste(toString(sQuote(Site_Name_List)),collapse=", "), ") AND STATUS='NP'") #use this to input vector of site names to select from into select clause.
 
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
@@ -58,10 +60,18 @@ serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/Ar
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
 selected_nhas <- arc.select(nha, where_clause=SQLquery_Sites)
 
+
+selected_nhas <- selected_nhas[order(selected_nhas$SITE_NAME),]#order alphabetically
+
+####
+#ensure that both data frames have sites in the same order
+#very important!!! Just alphabetical for both
+####
+identical(selected_nhas$SITE_NAME, as.character(NHA_list$Site.Name))
+
 #generate list of folder paths for selected NHAs
 ####
 
-Site_Name_List <- as.list(Site_Name_List)
 nha_foldername_list <- list()
 for (i in 1:length(Site_Name_List)) {
   nha_foldername_list[[i]] <- gsub(" ", "", Site_Name_List[i], fixed=TRUE)
@@ -288,31 +298,6 @@ ELCODE_TR[[i]] <- ElementTR[[i]] %>%
   inner_join(ThreatRecTable[[i]])
 }
 
-#####
-
-# Generate paths to previous site accounts for the area included in the present NHA
-OldNames <- NULL
-OldNames <- sapply(seq_along(selected_nhas$OLD_SITE_NAME), function(x) gsub(", ", ",",selected_nhas$OLD_SITE_NAME[x]))
-#remove spaces after comma
-OldNames <- sapply(seq_along(OldNames), function(x) strsplit(OldNames[x], split=",")) #split comma-separated list of old site names into individual elements
-}
-
-for (i in 1: length(OldNames)){
-  OldNames[[i]] <- unlist(OldNames[[i]])
-}
-
-N <- length(OldNames)
-temp <- list()
-#loop through each old site name to create a list of the elements needed to create the file path to that site account
-for (i in 1:N) {
-  temp[[i]] <- paste0(c("P:\\\\Conservation Programs\\\\Natural Heritage Program\\\\ConservationPlanning\\\\NaturalHeritageAreas\\\\SiteDescriptions\\\\=",selected_nha$COUNTY," CNHI site descriptions\\\\", OldNames[i],".pdf"))
-}  
-  
-x <- NULL #list of paths for URLs to old site accounts
-for (i in 1:N) {
-  x[i]  <- paste0(unlist(temp[i]), sep="", collapse="")
-}
-
 # set up the temp directories
 NHAdest1 <- sapply(seq_along(nha_foldername_list), function(x) paste(NHAdest,"DraftSiteAccounts",nha_foldername_list[x],sep="/"))
 sapply(seq_along(NHAdest1), function(x) dir.create(NHAdest1[x], showWarnings=FALSE)) # make a folder for each site, if those folders do not exist already
@@ -328,25 +313,62 @@ slnha <- list()
 nha_sf_list <- list()
 
 nha_sf_list <- arc.data2sf(selected_nhas)
+
 a <- st_area(nha_sf_list) #calculate area
 a <- a*0.000247105 #convert m2 to acres
 selected_nhas$Acres <- as.numeric(a)
 
 mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
 #### having some trouble getting the basetiles working ####
-basetiles <- sapply(seq_along(nha_sf$OBJECTID), function(x) tmaptools::read_osm(nha_sf_list[x], type=mtype, ext=1.5, use.colortable=FALSE))
+basetiles <- sapply(seq_along(nha_sf_list$geom), function(x) tmaptools::read_osm(nha_sf_list$geom[x], type=mtype, ext=1.5, use.colortable=FALSE))
 
-### This is not working right now...###
+
 # plot it
-for (i in 1:length(nha_foldername_list)) {
+nha_map <- list()
+for (i in 1:length(nha_sf_list$geom)) {
 tmap_mode("plot")
 nha_map[[i]] <- tm_shape(basetiles[[i]], unit="m") +
   tm_rgb() +
-  tm_shape(nha_sf[i,]) +
+  tm_shape(nha_sf_list[i,]) +
   tm_borders("red", lwd=1.5)+
   tm_legend(show=FALSE) + 
   tm_layout(attr.color="white") +
   tm_compass(type="arrow", position=c("left","bottom")) +
   tm_scale_bar(position=c("center","bottom"))
 tmap_save(nha_map[[i]], filename=paste(NHAdest1[i], "/", nha_foldername_list[[i]],"_tempmap.png",sep=""), units="in", width=7) 
+}
+
+######### Write the output document for the site ###############
+#define all the elements in R markdown report
+NHAdest2 <- NHAdest1[i]
+selectedNhas <- selected_nhas[i,]
+speciesTable <- SD_speciesTable[[i]]
+ptrepsSelected <- ptreps_selected[[i]]
+ELCODETR <- ELCODE_TR[[i]]
+nhaFoldername <- nha_foldername_list[[i]]
+LinksSelect <- Links[[i]]
+SiteRank1 <- SiteRank[[i]]
+
+# write all NHA templates at once #
+for (i in 1:length(nha_filename_list)) {
+  NHAdest2 <- NHAdest1[i]
+  selectedNhas <- selected_nhas[i,]
+  speciesTable <- SD_speciesTable[[i]]
+  ptrepsSelected <- ptreps_selected[[i]]
+  ELCODETR <- ELCODE_TR[[i]]
+  nhaFoldername <- nha_foldername_list[[i]]
+  LinksSelect <- Links[[i]]
+  SiteRank1 <- SiteRank[[i]]
+  
+rmarkdown::render(input=here::here("scripts","template_NHAREport_part1v2.Rmd"), output_format="word_document", 
+                  output_file=nha_filename_list[[i]],
+                  output_dir=NHAdest1[i])
+}  
+
+# delete the map, after its included in the markdown
+
+for (i in 1:length(nha_filename_list)){
+fn <- paste(NHAdest1[i], "/", nha_foldername_list[i],"_tempmap.png",sep="")
+if (file.exists(fn)) #Delete file if it exists
+  file.remove(fn)
 }

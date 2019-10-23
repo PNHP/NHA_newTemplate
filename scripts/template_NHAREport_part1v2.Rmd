@@ -2,17 +2,17 @@
 output: word_document
 ---
 
-# `r paste(as.character(nha_siteName), "NHA")` 
-Site significance rank: **`r paste(as.character(selected_nha$site_rank))`**  
+# `r paste(as.character(selectedNhas$SITE_NAME), "NHA")` 
+Site significance rank: **`r paste(as.character(SiteRank1))`**  
 
-NHA Join ID: **`r paste(as.character(selected_nha$NHA_JOIN_ID))`**    
+NHA Join ID: **`r paste(as.character(selectedNhas$NHA_JOIN_ID))`**    
 
 
 <br><br><br><br>
 
 # Instructions  
 
-This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder: `r paste(NHAdest1,"photos", sep="/")`.  
+This template will collect the written content for this NHA and allow us to transfer all information into a formatted report. Please fill in all boxes as completely as possible, using the information from Biotics, our species-specific threats and recommendations database, and our NHA geodatabases, as well as your own personal expertise. **Please do not delete any of the tags** (which look like this: |TAG|), as those demarcate the beginning and ending of each content section. Please make sure to check automated sections, such as the species table and location information, for accuracy. Make notes of any issues in the form of Word comments. Also, please be sure to upload any pictures you have associated with this site into the NHA report picture folder: `r paste(NHAdest2,"photos", sep="/")`.  
 
 <br><br><br><br>
   
@@ -33,15 +33,37 @@ Site Description - this should be about a one paragraph description of the site 
 <br><br><br><br>
 Paragraphs can be added to supply more detail about each species or group of species at this NHA, if you want. If information is added, try to keep it general and not have a lot of detail about each specific taxon as it will help to keep the sites as current as possible without a lot of ongoing editing-remember, we are going to rely on the factsheets for that purpose.  For example, it would be good to say something like "The dragonflies at this site depend on clean water to breed" as that statement would likely be true even if we added or subtracted species to the list.
 
-The brief description from the NHA geodatabase for this site reads: **`r selected_nha[7]$BRIEF_DESC`** 
+The brief description from the NHA geodatabase for this site reads: **`r selectedNhas$BRIEF_DESC`** 
 
-The following old NHA sites overlap with the current NHA: `r selected_nha$OLD_SITE_NAME`
+The following old NHA sites overlap with the current NHA: `r selectedNhas$OLD_SITE_NAME`
 
 You can access each of these old site accounts on the P drive, in the following locations:
 ```{r print site path 1, echo=FALSE, results='asis'}
+OldNames <- gsub(", ", ",",selectedNhas$OLD_SITE_NAME[i]) #remove spaces after comma
+OldNames <- strsplit(OldNames, split=",") #split comma-separated list of old site names into individual elements
+OldNames <- unlist(OldNames)
+
+N <- length(OldNames)
+OldNames_path <- list()
+
+N <- length(OldNames)
+OldNames_path <- list()
+
+for (i in 1:N) {
+  temp <- paste0(c("P:\\\\Conservation Programs\\\\Natural Heritage Program\\\\ConservationPlanning\\\\NaturalHeritageAreas\\\\SiteDescriptions\\\\=",selectedNhas$COUNTY[i]," CNHI site descriptions\\\\", OldNames[i],".pdf"))
+  
+  OldNames_path[[paste0("OldNames",i)]] <- temp
+}
+
+x <- NULL
+for (i in 1:N) {
+  x[i]  <- paste0(unlist(OldNames_path[i]), sep="", collapse="")
+}
+
 if (N >= 1) {
   cat(x[1])  
 } 
+
 ```
 
 <br><br><br><br>
@@ -94,11 +116,11 @@ Please check the species table below for accuracy. Make a note of any issues, us
 ```{r species table, echo=FALSE}
 ## Build the Species Table #########################
 
-SD_speciesTablePrint <- SD_speciesTable[,-which(names(SD_speciesTable) %in% c("ELCODE","EO_ID","ELSubID"))]
+SD_speciesTablePrint <- speciesTable[,-which(names(speciesTable) %in% c("ELCODE","EO_ID","ELSubID"))]
 SD_speciesTablePrint$SNAME <- paste(SD_speciesTablePrint$SCOMNAME," (",SD_speciesTablePrint$SNAME,")", sep="")
 SD_speciesTablePrint$SCOMNAME <- NULL
 
-row.names(SD_speciesTablePrint) <- SD_speciesTable$SNAME
+row.names(SD_speciesTablePrint) <- speciesTable$SNAME
 
 
 
@@ -116,16 +138,16 @@ STable
 
 ## Information from Biotics
 
-See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptreps_selected)`. Use this to inform both the site description and the threats and conservation recommendations section.  
+See output below from Biotics, in association with all the EOs at this site. Biotics fields reported include `r names(ptrepsSelected)`. Use this to inform both the site description and the threats and conservation recommendations section.  
 To learn more about each EO, follow the links provided below to the Biotics page for each EO at this site (you may have to copy and paste the links into your browser, once logged into Biotics, to get them to work):  
 
-`r Links`  
+`r LinksSelect`  
 
 <br><br><br><br>
 
 ```{r print Biotics info, echo=FALSE}
 
-SD_eodata <- ptreps_selected
+SD_eodata <- ptrepsSelected
 SD_eodatap <- c(SD_eodata, sep="--")
 do.call(paste, SD_eodatap)
 
@@ -147,7 +169,7 @@ Included below is species-specific information on general conservation threats a
 ``` {r EO Threats Database, echo=FALSE}
 
 #join tables and report threats and recs for selected species
-Sel_TR <- ELCODE_TR %>% 
+Sel_TR <- ELCODETR %>% 
   select(SNAME, CategoryName, Threats, Recs) %>% collect()
   
 #summarize by category of threats/recs and number of species present at site which they apply to
@@ -209,22 +231,22 @@ If you add any information that is supported by an additional reference, please 
 # Location  
 Please indicate whether the information below is correct. Use Word comments to flag any issues.  
 
-**Municipalities:** `r selected_nha$Muni`  
-**USGS quads:** `r selected_nha$USGS_QUAD`  
-**Previous CNHI reference:** `r selected_nha$OLD_SITE_NAME`  
-**Associated NHAs:** `r selected_nha$ASSOC_NHA`   
-**Overlapping Protected Lands:** `r selected_nha$PROTECTED_LANDS`  
-**Acreage:** `r signif(selected_nha$Acres, digits=0)` acres
+**Municipalities:** `r selectedNhas$Muni`  
+**USGS quads:** `r selectedNhas$USGS_QUAD`  
+**Previous CNHI reference:** `r selectedNhas$OLD_SITE_NAME`  
+**Associated NHAs:** `r selectedNhas$ASSOC_NHA`   
+**Overlapping Protected Lands:** `r selectedNhas$PROTECTED_LANDS`  
+**Acreage:** `r signif(selectedNhas$Acres, digits=0)` acres
 
 Please cite this Natural Heritage Area as:  
-Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(nha_siteName)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
+Pennsylvania Natural Heritage Program. `r format(Sys.Date(), "%Y")`. `r as.character(selectedNhas$SITE_NAME)` NHA. Created on `r format(Sys.Date(), "%d %b %Y")`. Available at: http://www.naturalheritage.state.pa.us/CNHI.aspx
 
 <br><br><br><br>
 
 
 # Map  
 
-![Core habitat boundaries of `r selected_nha$SITE_NAME` NHA](`r paste(NHAdest1, "/", nha_foldername,"_tempmap.png",sep="")`)
+![Core habitat boundaries of `r selectedNhas$SITE_NAME` NHA](`r paste(NHAdest2, "/", nhaFoldername,"_tempmap.png",sep="")`)
 
 
 # Photos    
