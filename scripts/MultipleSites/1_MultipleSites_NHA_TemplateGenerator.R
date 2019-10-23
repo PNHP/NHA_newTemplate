@@ -339,15 +339,6 @@ tmap_save(nha_map[[i]], filename=paste(NHAdest1[i], "/", nha_foldername_list[[i]
 }
 
 ######### Write the output document for the site ###############
-#define all the elements in R markdown report
-NHAdest2 <- NHAdest1[i]
-selectedNhas <- selected_nhas[i,]
-speciesTable <- SD_speciesTable[[i]]
-ptrepsSelected <- ptreps_selected[[i]]
-ELCODETR <- ELCODE_TR[[i]]
-nhaFoldername <- nha_foldername_list[[i]]
-LinksSelect <- Links[[i]]
-SiteRank1 <- SiteRank[[i]]
 
 # write all NHA templates at once #
 for (i in 1:length(nha_filename_list)) {
