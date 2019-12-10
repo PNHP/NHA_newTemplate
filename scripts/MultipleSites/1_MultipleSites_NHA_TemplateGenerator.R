@@ -54,6 +54,9 @@ NHA_list <- NHA_list[order(NHA_list$Site.Name),] #order alphabetically
 Site_Name_List <- as.vector(NHA_list$Site.Name)
 Site_Name_List <- as.list(Site_Name_List)
 SQLquery_Sites <- paste("SITE_NAME IN(",paste(toString(sQuote(Site_Name_List)),collapse=", "), ") AND STATUS='NP'") #use this to input vector of site names to select from into select clause.
+#Or use NHA join ID if that is easier/more direct--for example, apostrophes screw up the site name list in a SQL query
+#Site_NHAJoinID_List <-as.list(NHA_list$NHA.Join.ID)
+#SQLquery_Sites <- paste("NHA_Join_ID IN(",paste(toString(sQuote(Site_NHAJoinID_List)),collapse=", "), ") AND STATUS='NP'")
 
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
 #selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
@@ -257,7 +260,8 @@ for (i in seq_along(SummedTotalScore)) {
   }
 }
 
-SiteRank #list of site significance rankings
+selected_nhas$site_score <- unlist(SiteRank) #add site significance rankings to NHa data frame
+selected_nhas$site_rank <- unlist(SummedTotalScore) #add site significance score to NHA data frame
 
 #generate URLs for each EO at site
 URL_EOs <- list()
@@ -363,3 +367,31 @@ fn <- paste(NHAdest1[i], "/", nha_foldername_list[i],"_tempmap.png",sep="")
 if (file.exists(fn)) #Delete file if it exists
   file.remove(fn)
 }
+
+###############################################################################################################
+# insert the NHA data into a sqlite database
+nha_data <- NULL
+
+
+nha_data <- selected_nhas[,c("SITE_NAME","SITE_TYPE","NHA_JOIN_ID","site_rank","site_score","BRIEF_DESC","COUNTY","Muni","USGS_QUAD","ASSOC_NHA","PROTECTED_LANDS")]
+nha_data$nha_filename <- unlist(nha_filename_list)
+nha_data$nha_folderpath <- NHAdest1
+nha_data$nha_foldername <- unlist(nha_foldername_list)
+
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
+
+dbAppendTable(db_nha, "nha_main", nha_data)
+dbDisconnect(db_nha)
+
+#Create record of NHA creation for organizing writing and editing tasks
+db_nha <- dbConnect(SQLite(), dbname=nha_databasename)
+nha_data$Template_Created <- as.character(Sys.Date()) 
+nha_sum <- nha_data[,c("SITE_NAME","COUNTY","nha_folderpath", "Template_Created")]
+dbAppendTable(db_nha, "nha_sitesummary", nha_sum) 
+
+
+dbDisconnect(db_nha) #disconnect
+
+## For now, you should be hand copy and paste the new rows into the NHA site summary Excel worksheet. I created an exports folder within the database folder where .csv versions can periodically be sent, as batches of NHA templates are created. 
+########################
+
