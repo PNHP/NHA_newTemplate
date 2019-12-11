@@ -384,6 +384,47 @@ dbAppendTable(db_nha, "nha_main", nha_data)
 dbDisconnect(db_nha)
 
 #Create record of NHA creation for organizing writing and editing tasks
+
+#create some summary stats describing EOs at each site by taxa group, to help with determining who should write site accounts
+#build functions
+plantperc <- function(x) {
+  p <- nrow(species_table_select[[x]][species_table_select[[x]]$ELEMENT_TYPE == 'P',])
+  pt <- nrow(species_table_select[[x]])
+  p/pt
+}
+
+musselperc <- function(x){
+  u <- nrow(species_table_select[[x]][species_table_select[[x]]$ELEMENT_TYPE == 'U',])
+  ut <- nrow(species_table_select[[x]])
+  u/ut
+}
+
+insectperc <- function(x){
+  i <- nrow(species_table_select[[x]][species_table_select[[x]]$ELEMENT_TYPE %in%  c('IM','IB','IA','ID','IT'),])
+  it <- nrow(species_table_select[[x]])
+  i/it
+}
+  
+herpperc <- function(x){
+  h <- nrow(species_table_select[[x]][species_table_select[[x]]$ELEMENT_TYPE %in%  c('R','A'),])
+  ht <- nrow(species_table_select[[x]])
+  h/ht
+}
+
+#calculate for each spp table, using functions
+PlantEO_percent <- unlist(lapply(seq_along(species_table_select),
+       function(x) plantperc(x)))
+MusselEO_percent <- unlist(lapply(seq_along(species_table_select),
+                                 function(x) musselperc(x)))
+InsectEO_percent <- unlist(lapply(seq_along(species_table_select),
+                                 function(x) insectperc(x)))
+HerpEO_percent <- unlist(lapply(seq_along(species_table_select),
+                                 function(x) herpperc(x)))
+nEOs <- unlist(lapply(seq_along(species_table_select),
+                      function(x) nrow(species_table_select[[x]]))) #number of total EOs at site
+
+EO_sumtable <- as.data.frame(cbind(nEOs, PlantEO_percent,MusselEO_percent,InsectEO_percent,HerpEO_percent,)) #bind summary stats into one table together
+
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename)
 nha_data$Template_Created <- as.character(Sys.Date()) 
 nha_sum <- nha_data[,c("SITE_NAME","COUNTY","nha_folderpath", "Template_Created")]
