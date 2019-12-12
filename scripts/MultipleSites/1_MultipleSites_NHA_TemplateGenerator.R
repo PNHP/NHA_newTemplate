@@ -168,16 +168,11 @@ dbDisconnect(db_nha)
 
 #check whether there are multiple EOs in the species table for the same species, and only keep one record for each species, the most recently observed entry
 for (i in 1:length(SD_speciesTable)) {
-duplic_Spp <- SD_speciesTable[[i]] %>%
-  group_by(ELCODE) %>%
-  mutate(dupe=n()>1)
-duplic_Spp <- as.data.frame(duplic_Spp)
-duplic_Spp2 <- duplic_Spp[(duplic_Spp$dupe != TRUE),] #remove rows which are the same species
-same <- duplic_Spp[(duplic_Spp$dupe == TRUE),]#select the rows which are the same
-same <- same[order(same$LASTOBS, decreasing=TRUE),] #sort by date, so that when unique is called, the most recent rows are preserved
-unique <- unique(same[,-15])#remove the duplication code column
-SD_speciesTable[[i]] <- as.data.frame(rbind(SD_speciesTable[[i]], unique))
+duplic_Spp <- SD_speciesTable[[i]]
+duplic_Spp <- duplic_Spp[order(duplic_Spp$LASTOBS, decreasing=TRUE),]
+SD_speciesTable[[i]] <- duplic_Spp[!duplicated(duplic_Spp[1]),]
 }
+####
 
 ### Pull out info from Biotics for each site ###
 
