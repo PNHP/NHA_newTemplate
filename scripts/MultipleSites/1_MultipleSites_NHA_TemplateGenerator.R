@@ -54,12 +54,16 @@ NHA_list <- NHA_list[order(NHA_list$Site.Name),] #order alphabetically
 Site_Name_List <- as.vector(NHA_list$Site.Name)
 Site_Name_List <- as.list(Site_Name_List)
 SQLquery_Sites <- paste("SITE_NAME IN(",paste(toString(sQuote(Site_Name_List)),collapse=", "), ") AND STATUS='NP'") #use this to input vector of site names to select from into select clause.
-#Or use NHA join ID if that is easier/more direct--for example, apostrophes screw up the site name list in a SQL query
+#Or use NHA join ID if that is easier/more direct and you have just a few sites to run--for example, apostrophes screw up the site name list in a SQL query
 #Site_NHAJoinID_List <-as.list(NHA_list$NHA.Join.ID)
 #SQLquery_Sites <- paste("NHA_Join_ID IN(",paste(toString(sQuote(Site_NHAJoinID_List)),collapse=", "), ") AND STATUS='NP'")
+#Site_Name_List <- c("White's Woods")
+#Site_Name_List <- as.list(Site_Name_List)
+#NHA_list <- c("White's Woods")
 
 serverPath <- paste("C:/Users/",Sys.getenv("USERNAME"),"/AppData/Roaming/ESRI/ArcGISPro/Favorites/PNHP.PGH-gis0.sde/",sep="")
-#selected_nha <- arc.select(nha, where_clause="SITE_NAME='Allegheny River Pool #6' AND STATUS = 'NP'")  # Carnahan Run at Stitts Run Road  AND STATUS ='NP'
+#selected_nhas <- arc.select(nha, where_clause="SITE_NAME='White's Woods' AND STATUS = 'NP'") #select individual site by name 
+#selected_nhas <- arc.select(nha, where_clause="NHA_JOIN_ID IN('alj84574')") #select individual site or sites by NHA_JOIN_ID, eg if they have an apostrophe in them
 nha <- arc.open(paste(serverPath,"PNHP.DBO.NHA_Core", sep=""))
 selected_nhas <- arc.select(nha, where_clause=SQLquery_Sites)
 
@@ -79,7 +83,7 @@ nha_foldername_list <- list()
 for (i in 1:length(Site_Name_List)) {
   nha_foldername_list[[i]] <- gsub(" ", "", Site_Name_List[i], fixed=TRUE)
   nha_foldername_list[[i]] <- gsub("#", "", nha_foldername_list[i], fixed=TRUE)
-  nha_foldername_list[[i]] <- gsub("''", "", nha_foldername_list[i], fixed=TRUE)
+  nha_foldername_list[[i]] <- gsub("'", "", nha_foldername_list[i], fixed=TRUE)
 }
 nha_foldername_list <- unlist(nha_foldername_list) #list of folder names
 
@@ -318,9 +322,7 @@ a <- a*0.000247105 #convert m2 to acres
 selected_nhas$Acres <- as.numeric(a)
 
 mtype <- 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}?'
-#### having some trouble getting the basetiles working ####
 basetiles <- sapply(seq_along(nha_sf_list$geom), function(x) tmaptools::read_osm(nha_sf_list$geom[x], type=mtype, ext=1.5, use.colortable=FALSE))
-
 
 # plot it
 nha_map <- list()
@@ -418,11 +420,12 @@ HerpEO_percent <- unlist(lapply(seq_along(species_table_select),
 nEOs <- unlist(lapply(seq_along(species_table_select),
                       function(x) nrow(species_table_select[[x]]))) #number of total EOs at site
 
-EO_sumtable <- as.data.frame(cbind(nEOs, PlantEO_percent,MusselEO_percent,InsectEO_percent,HerpEO_percent,)) #bind summary stats into one table together
+EO_sumtable <- as.data.frame(cbind(nEOs, PlantEO_percent,MusselEO_percent,InsectEO_percent,HerpEO_percent)) #bind summary stats into one table together
 
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename)
 nha_data$Template_Created <- as.character(Sys.Date()) 
-nha_sum <- nha_data[,c("SITE_NAME","COUNTY","nha_folderpath", "Template_Created")]
+nha_sum <- nha_data[,c("NHA_JOIN_ID","SITE_NAME","COUNTY","nha_folderpath", "site_score")]
+nha_sum <- cbind(nha_sum, EO_sumtable)
 dbAppendTable(db_nha, "nha_sitesummary", nha_sum) 
 
 
