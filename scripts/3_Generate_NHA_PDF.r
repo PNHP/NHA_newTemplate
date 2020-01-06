@@ -111,7 +111,7 @@ p1_path <- paste(NHAdest, "DraftSiteAccounts", nha_foldername, "photos", nha_pho
 namesitalic <- NHAspecies[which(NHAspecies$ELEMENT_TYPE!="C"),]$SNAME
 namesitalic <- namesitalic[!is.na(namesitalic)]
 vecnames <- namesitalic 
-namesitalic <- paste0("\\\\textit{",namesitalic,"}") 
+namesitalic <- paste0("\\\\textit{",namesitalic,"}")                                                                                                                                              
 names(namesitalic) <- vecnames
 rm(vecnames)
 for(i in 1:length(namesitalic)){

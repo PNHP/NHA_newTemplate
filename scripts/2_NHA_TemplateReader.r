@@ -24,7 +24,7 @@ source(here::here("scripts", "0_PathsAndSettings.r"))
 
 # Pull in the selected NHA data ################################################
 # File path for completed Word documents
-nha_name <- "Hogback Barrens"
+nha_name <- "Cherry Run at Cochrans Mills"
 
 # query the database for the site information
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
@@ -38,7 +38,7 @@ nha_foldername <- foldername(nha_siteName) # this now uses a user-defined functi
 NHA_file <- list.files(path=paste(NHAdest, "DraftSiteAccounts", nha_foldername, sep="/"), pattern=".docx$")  # --- make sure your excel file is not open.
 NHA_file
 # select the file number from the list below
-n <- 2
+n <- 1
 NHA_file <- NHA_file[n]
 # create the path to the whole file!
 NHAdest1 <- paste(NHAdest,"DraftSiteAccounts", nha_foldername, NHA_file, sep="/")
@@ -71,7 +71,7 @@ Description <- rm_between(text1, '|DESC_B|', '|DESC_E|', fixed=TRUE, extract=TRU
 
 # add the above to the database
 db_nha <- dbConnect(SQLite(), dbname=nha_databasename) # connect to the database
-  dbSendStatement(db_nha, paste("UPDATE nha_main SET Description = ", sQuote(Description), " WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
+  dbSendStatement(db_nha, paste("UPDATE nha_siteaccount SET Description = ", sQuote(Description), " WHERE NHA_JOIN_ID = ", sQuote(nha_data$NHA_JOIN_ID), sep=""))
 dbDisconnect(db_nha)
 
 # Threats and Recommendations #################################################################################
