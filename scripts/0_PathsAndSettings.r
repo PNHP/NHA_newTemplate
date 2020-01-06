@@ -104,7 +104,8 @@ EO_ImSelect <- function(x) {
 
 #Function to go back through and further subset EOs into finer taxa groupings
 EO_ImFix <- function(x){
-SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[SENSITIVE=="Y"] <- "Sensitive.png") #substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request) 
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[SENSITIVE=="Y"] <- "Sensitive.png") #substitute image for sensitive species, as necessary (this does not, however, account for sensitive data by request)
+SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[SENSITIVE_EO=="Y"] <- "Sensitive.png") #substitute image for sensitive occurrences (e.g. landowner concerns), as necessary
 SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IZSPN")] <- "Sponges.png") #subset out freshwater sponges
 SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IICOL")] <- "TigerBeetles.png") #subset out beetles
 SD_speciesTable[[i]] <- within(SD_speciesTable[[i]], Images[startsWith(ELCODE, "IITRI")] <- "Caddisflies.png") #subset out caddisflies + stoneflies (?)
